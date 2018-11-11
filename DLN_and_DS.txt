@@ -1,0 +1,134 @@
+class Node {
+public:
+	void SetValue (int a) { value = a; }
+	int GetValue () { return value; }
+	void SetPrvNode (Node* PN) { PrvNode = PN; }
+	Node* GetPrvNode () { return PrvNode; }
+	void SetNextNode (Node* NN) { NextNode = NN; }
+	Node* GetNextNode () { return NextNode; }
+private:
+	int value;
+	Node* PrvNode;
+	Node* NextNode;
+};
+#include <iostream>
+#include "Node.h"
+
+using namespace std;
+
+class DLN {
+public:
+	DLN ();
+	~DLN ();
+	void Add (int a);
+	void Remove (int a);
+	int GetSize () { return Sz; }
+	int GetCurrentValue ();
+	//void PrintAllValues ();
+	void PrintAllValuesInRv ();
+private:
+	Node* HeadNode;
+	Node* CurrentNode;\\  !_!_!
+	int Sz;
+};
+
+DLN :: DLN () {
+	HeadNode = new Node;\\  !_!_!
+	HeadNode->SetValue(0);
+	HeadNode->SetNextNode (NULL);
+	HeadNode->SetPrvNode(NULL);
+	CurrentNode = HeadNode;\\  !_!_!
+	Sz = 0;
+}
+
+DLN :: ~DLN () {
+	delete HeadNode;
+	delete CurrentNode;
+}
+
+void DLN :: Add (int a) {
+	Node* NewNode = new Node;\\  !_!_!
+	NewNode->SetValue(a);
+	NewNode->SetNextNode(NULL);
+	NewNode->SetPrvNode(CurrentNode);
+      **CurrentNode->SetNextNode(NewNode);
+	CurrentNode = NewNode;\\  !_!_!
+	Sz++;
+}
+
+void DLN :: Remove (int a) {
+	Node* Temp = HeadNode->GetNextNode();
+	while (Temp != NULL) {
+		if (Temp->GetValue() == a) {
+			Node* NN = Temp->GetNextNode();
+			Node* PN = Temp->GetPrvNode();
+			PN->SetNextNode(NN);
+			if (Temp == CurrentNode) {
+				CurrentNode = PN;
+			}
+			else {
+				NN->SetPrvNode (PN);
+			}
+			Sz--;
+			break;
+		}
+		Temp = Temp->GetNextNode();
+	}
+	delete Temp;
+}
+
+int DLN :: GetCurrentValue () {
+	return CurrentNode->GetValue();
+}
+	//void PrintAllValues ();
+
+void DLN :: PrintAllValuesInRv () {
+	Node* Temp = CurrentNode;\\  !_!_!
+	while (Temp != HeadNode) {
+		cout << Temp->GetValue() << "\t";
+		Temp = Temp->GetPrvNode();
+	}
+	cout << endl;
+}
+#include "C:\Users\Teacher\Documents\Visual Studio 2010\Projects\DoubleLinkList\DoubleLinkList\DLN.h"
+
+class DynamicStack {
+public:
+	DynamicStack () {}
+	~DynamicStack () {}
+	void Push (int a);
+	void Pop();
+	int GetSize();
+	int GetTopValue();
+	bool IsEmpty();
+	void PrintAllDataRv ();
+private:
+	DLN dln;
+};
+
+void DynamicStack :: Push (int a) {
+	dln.Add(a);
+}
+
+void DynamicStack :: Pop() {
+	dln.Remove(GetTopValue());
+}
+
+int DynamicStack :: GetSize() {
+	return dln.GetSize();
+}
+
+int DynamicStack :: GetTopValue() {
+	return dln.GetCurrentValue();
+}
+
+
+bool DynamicStack :: IsEmpty() {
+	if (GetSize() == 0) return true;
+	else return false;
+}
+
+void DynamicStack :: PrintAllDataRv () {
+	dln.PrintAllValuesInRv();
+}
+

@@ -1,0 +1,64 @@
+#include<iostream>
+
+using namespace std;
+
+#define size 10
+
+void copy_array(int *a, int *b, int sz){
+	for (int i = 0; i < sz; i++){
+		a[i] = b[i];
+	}
+}
+
+class selection_sort{
+private:
+	int array[size];
+public:
+	selection_sort(int *arr){ copy_array(array, arr, size); }
+	~selection_sort(){}
+	void print_array(){
+		cout << "elements in array:";
+		for (int i = 0; i < size; i++){
+			cout << array[i] << " ";
+		}
+	}
+	void swap(int &a, int &b){
+		int temp;
+		temp = a;
+		a = b;
+		b = temp;
+	}
+	void sort(){
+		for (int i = 0; i < size; i++){
+			int min_value_pos = i;
+			for (int i = 0; i < size - 1; i++){
+				if (array[min_value_pos]<array[i]){
+					swap(array[min_value_pos], array[i]);
+				}
+				else{
+					continue;
+				}
+
+			}
+
+		}
+
+	}
+
+
+};
+void main(){
+	int arr[size];
+	for (int i = 0; i < size; i++){
+		arr[i] = rand() % 100;
+	}
+
+	selection_sort ob(arr);
+	cout << "before sorting: " << endl;;
+	ob.print_array();
+	ob.sort();
+	cout << "after sort:" << endl;
+	ob.print_array();
+
+
+}

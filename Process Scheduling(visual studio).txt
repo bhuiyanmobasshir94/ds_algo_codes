@@ -1,0 +1,429 @@
+
+filename :classes.h
+
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+class process{  //process representation in this programme
+public:
+	string process_name = "";
+	float arrival_time = 0;
+	float brust_time = 0;
+	float remain_time = 0;
+};
+
+class process_gant_chart :public process{   //process abstraction for gantt chart
+public:
+	float start_time = 0;
+	float end_time = 0;
+};
+
+==============================================================
+filename :functions.h
+
+#include"classes.h"
+
+void swap_(process &a, process &b){  //for sorting
+	process t = a;
+	a = b;
+	b = t;
+}
+
+process* sort(process *arr, const int &size){  //using buble sort to arrange the processes by their arrival time
+	for (int i = size - 1; i > 0; i--){
+		for (int j = 0; j < i; j++){
+			if (arr[j].arrival_time > arr[j + 1].arrival_time) swap_(arr[j], arr[j + 1]);
+			else continue;
+		}
+	}
+	//cout << "sort completed" << endl;
+	return arr;   //returning the head of the sorted array
+}
+
+process* input(const int &number){   //taking processes's attributes from user
+	process *process_array = new process[number];
+
+	string name = "";
+	float arrival_time = 0;
+	float brust_time = 0;
+
+	for (int i = 0; i < number; i++){
+		cout << "Enter process name(unique) :";
+		cin >> name;
+		cout << "Enter arrival time for process " << name << " :";
+		cin >> arrival_time;
+		cout << "Enter brust time for process " << name << " :";
+		cin >> brust_time;
+
+		process_array[i].process_name = name;
+		process_array[i].arrival_time = arrival_time;
+		process_array[i].brust_time = brust_time;
+		process_array[i].remain_time = brust_time;
+
+		cout << endl;
+	}
+	process *sorted = sort(process_array, number);
+	return sorted;  //returning the head of processes's attributes carrying sorted array
+}
+
+int lowest_remain_time(process *arr,const int &number_of_process, const float &arrival_time) {
+	float lowest_remain = 0;
+	int index_of_lowest = 0;
+	bool first_time = true;
+	for (int i = 0;i < number_of_process;i++) {
+		if (arr[i].remain_time <= 0)continue;
+		else if (arr[i].arrival_time <= arrival_time) {
+			if (first_time == true) {
+				lowest_remain = arr[i].remain_time;
+				index_of_lowest = i;
+				first_time = false;
+			}
+			else{
+				if (arr[i].remain_time < lowest_remain) {
+					lowest_remain = arr[i].remain_time;
+					index_of_lowest = i;
+				}
+				else continue;
+			}
+		}
+		else continue;
+	}
+	
+	return index_of_lowest;
+}
+
+float total_brust_time(process *arr,const int &number_of_process){
+	float total = 0;
+	for (int i = 0; i < number_of_process; i++){
+		total += arr[i].brust_time;
+	}
+	return total;
+}
+
+bool execution_complete(process *arr,const int &number_of_process){
+	for (int i = 0; i < number_of_process; i++){
+		if (arr[i].remain_time > 0) return false;
+		else continue;
+	}
+	return true;
+}
+
+process_gant_chart* resize(process_gant_chart *old,const int &size) {
+	process_gant_chart *new_arr=new process_gant_chart[size];
+	for (int i = 0;i < size-1;i++) {
+		new_arr[i] = old[i];
+	}
+	return new_arr;
+}
+
+int unfinished_process(process *arr, const int &number_of_process) {
+	for (int i = 0;i < number_of_process;i++) {
+		if (arr[i].remain_time > 0) return i;
+		else continue;
+	}
+	return - 1;
+}
+
+=============================================================
+filename :scheduling.h
+
+#include"functions.h"
+
+void first_come_first_serve(process *process_array,const int &number){
+	cout << "scheduling by first come first serve(FCFS) algorithm" << endl;
+
+	float total_brust = total_brust_time(process_array,number);
+	/*
+	we have to add all the brust time to cheak that with the end of gantt chart. if the end of gantt chart
+	is equal to total_brust, then the scheduling is ok.
+	*/
+	process_gant_chart *gantt_chart = new process_gant_chart[number];  //gantt chart reprentation
+	for (int i = 0; i < number; i++){
+		gantt_chart[i].process_name = process_array[i].process_name;
+		cout << gantt_chart[i].process_name << " -> ";
+		if (i == 0) gantt_chart[i].start_time = process_array[i].arrival_time;
+		else gantt_chart[i].start_time = gantt_chart[i - 1].end_time;
+		gantt_chart[i].end_time = gantt_chart[i].start_time + process_array[i].brust_time;
+	}
+
+	if ((gantt_chart[number - 1].end_time - gantt_chart[0].start_time) == total_brust){ cout << "scheduing sucessful" << endl; }
+	else cout << "Couldn't schedule, something happend" << endl;
+
+	float *waiting_time = new float[number];
+	float total = 0;
+	for (int i = 0; i < number; i++){
+		waiting_time[i] = gantt_chart[i].start_time - process_array[i].arrival_time;
+		cout << "waiting time for " << process_array[i].process_name << " is :" << waiting_time[i] << endl;
+		if (waiting_time[i] < 0) continue;
+		else total += waiting_time[i];
+	}
+
+	cout << "avarage_waiting_time= " << total / number << endl;
+	cout << endl;
+	delete[] waiting_time;
+	delete[] gantt_chart;
+
+}
+
+void sjf_non_preemptive(process *process_array, const int &number_of_process){
+	cout << "scheduling by sortest job frist(SJF) non-preemptive algorithm " << endl;
+
+	float total_brust = total_brust_time(process_array, number_of_process);
+	process_gant_chart *gantt_chart = new process_gant_chart[number_of_process];
+	int index_for_lowest_brust_time = 0;
+	for (int j = 0; j < number_of_process; j++) {
+		if (j == 0) gantt_chart[j].start_time = process_array[j].arrival_time;
+		else gantt_chart[j].start_time = gantt_chart[j - 1].end_time;
+
+		index_for_lowest_brust_time = lowest_remain_time(process_array, number_of_process, gantt_chart[j].start_time);
+		gantt_chart[j].process_name = process_array[index_for_lowest_brust_time].process_name;
+		cout << gantt_chart[j].process_name << " -> ";
+		gantt_chart[j].arrival_time = process_array[index_for_lowest_brust_time].arrival_time;
+		gantt_chart[j].end_time = gantt_chart[j].start_time + process_array[index_for_lowest_brust_time].brust_time;
+		process_array[index_for_lowest_brust_time].remain_time = 0;
+		gantt_chart[j].remain_time = 0;
+
+	}
+	if ((gantt_chart[number_of_process - 1].end_time - gantt_chart[0].start_time) == total_brust){ cout << "scheduing sucessful" << endl; }
+	else cout << "Couldn't schedule, something happend" << endl;
+
+	float *waiting_time = new float[number_of_process];
+	float total = 0;
+	for (int i = 0; i < number_of_process; i++){
+		waiting_time[i] = gantt_chart[i].start_time - gantt_chart[i].arrival_time;
+		cout << "waiting time for " << gantt_chart[i].process_name << " is :" << waiting_time[i] << endl;
+		if (waiting_time[i] < 0)continue;
+		else total += waiting_time[i];
+	}
+
+	cout << "avarage_waiting_time= " << total / number_of_process << endl;
+	cout << endl;
+	delete[] waiting_time;
+	delete[] gantt_chart;
+}
+
+void sjf_preemptive(process *process_array, const int &number_of_process) {
+	cout << "Scheduling by sortest job first(SJF) preemptive algorithm" << endl;
+
+	float total_brust = total_brust_time(process_array, number_of_process);
+	process_gant_chart *gantt_chart = new process_gant_chart;
+	int index_for_lowest_remain = 0;
+	int i = 0, j = 0;
+	for (; execution_complete(process_array, number_of_process) != true; i++) {
+		gantt_chart = resize(gantt_chart, (i + 1));
+		if (i == 0) {
+			gantt_chart[i].start_time = process_array[i].arrival_time;
+		}
+		else {
+			gantt_chart[i].start_time = gantt_chart[i - 1].end_time;
+		}
+		index_for_lowest_remain = lowest_remain_time(process_array, number_of_process, gantt_chart[i].start_time);
+		gantt_chart[i].process_name = process_array[index_for_lowest_remain].process_name;
+		cout << gantt_chart[i].process_name << " -> ";
+
+		if (j < (number_of_process - 1)) {
+			while (process_array[j].arrival_time == process_array[j + 1].arrival_time) {
+				j++;
+			}
+				gantt_chart[i].end_time = process_array[j + 1].arrival_time;
+				j++;
+				if (process_array[index_for_lowest_remain].remain_time < (gantt_chart[i].end_time - gantt_chart[i].start_time)) {
+					gantt_chart[i].end_time = process_array[index_for_lowest_remain].remain_time + gantt_chart[i].start_time;
+					j--;
+				}
+		}
+		else {
+			gantt_chart[i].end_time = process_array[index_for_lowest_remain].remain_time + gantt_chart[i].start_time;
+		}
+		process_array[index_for_lowest_remain].remain_time = process_array[index_for_lowest_remain].remain_time - (gantt_chart[i].end_time - gantt_chart[i].start_time);
+	}
+
+	if ((gantt_chart[i - 1].end_time - gantt_chart[0].start_time) == total_brust) { cout << "scheduing sucessful" << endl; }
+	else cout << "Couldn't schedule, something happend" << endl;
+
+	float total = 0;
+	float *waiting_time = new float[number_of_process];
+	for (int k = 0;k < number_of_process;k++) {
+		float last_end = 0;
+		bool first_time = true;
+		for (int m = 0;m < i;m++) {
+			if (process_array[k].process_name == gantt_chart[m].process_name) {
+				if (first_time == true) {
+					waiting_time[k] = (gantt_chart[m].start_time - process_array[k].arrival_time);
+					last_end = gantt_chart[m].end_time;
+					first_time = false;
+				}
+				else {
+					waiting_time[k] += (gantt_chart[m].start_time - last_end);
+					last_end = gantt_chart[m].end_time;
+				}
+			}
+			else continue;
+		}
+		cout << "waiting time for " << process_array[k].process_name << " is " << waiting_time[k] << endl;
+		if (waiting_time[k] < 0)continue;
+		else total += waiting_time[k];
+	}
+
+	cout << "avarage waiting time :" << total / number_of_process << endl;
+
+	delete[] waiting_time;
+	delete[] gantt_chart;
+	cout << endl;
+}
+
+void round_robin(process *process_array, const int &number_of_process,const float &quantum) {
+	cout << "scheduling by round robin algorithm, Quantum :"<<quantum << endl;
+	float total_brust = total_brust_time(process_array, number_of_process);
+
+	process_gant_chart *gantt_chart = new process_gant_chart;
+	int i = 0,index_for_incomplete=0;
+	for (int j=0;unfinished_process(process_array,number_of_process) != -1;++i) {
+		gantt_chart = resize(gantt_chart, (i+1));
+
+		if (i == 0)gantt_chart[i].start_time = 0;
+		else gantt_chart[i].start_time = gantt_chart[i - 1].end_time;
+
+		gantt_chart[i].end_time = gantt_chart[i].start_time + quantum;
+
+		if (j < number_of_process) {
+			gantt_chart[i].process_name = process_array[j].process_name;
+			if (process_array[j].remain_time <= (gantt_chart[i].end_time - gantt_chart[i].start_time)) {
+				gantt_chart[i].end_time = gantt_chart[i].start_time + process_array[j].remain_time;
+				process_array[j].remain_time = 0;
+			}
+			else {
+				process_array[j].remain_time = process_array[j].remain_time - quantum;
+			}
+			j++;
+		}
+		else {
+			index_for_incomplete = unfinished_process(process_array, number_of_process);
+			gantt_chart[i].process_name = process_array[index_for_incomplete].process_name;
+			if (process_array[index_for_incomplete].remain_time <= (gantt_chart[i].end_time - gantt_chart[i].start_time)) {
+				gantt_chart[i].end_time = gantt_chart[i].start_time + process_array[index_for_incomplete].remain_time;
+				process_array[index_for_incomplete].remain_time = 0;
+			}
+			else {
+				process_array[index_for_incomplete].remain_time = process_array[index_for_incomplete].remain_time - quantum;
+			}
+		}
+		cout << gantt_chart[i].process_name <<" -> ";
+	}
+	if (gantt_chart[i - 1].end_time == total_brust)cout << "scheduling successful" << endl;
+	else cout << "Couldn't scheduling...something happend" << endl;
+
+	float total_wait=0;
+	float *waiting_time = new float[number_of_process];
+
+	for (int k = 0;k < number_of_process;k++) {
+		bool first_time = true;
+		float last_end = 0;
+		for (int m = 0;m < i;m++) {
+			if (process_array[k].process_name == gantt_chart[m].process_name) {
+				if (first_time == true) {
+					waiting_time[k] = gantt_chart[m].start_time - process_array[k].arrival_time;
+					last_end = gantt_chart[m].end_time;
+					first_time = false;
+				}
+				else {
+					waiting_time[k] += (gantt_chart[m].start_time-last_end);
+					last_end = gantt_chart[m].end_time;
+				}
+			}
+			else continue;
+		}
+		cout << "waiting time for " << process_array[k].process_name << " is " << waiting_time[k] << endl;
+		if (waiting_time[k] < 0)continue;
+		else total_wait += waiting_time[k];
+	}
+
+	cout << "avarage waiting time :" << total_wait / number_of_process << endl;
+
+	delete[] waiting_time;
+	delete[] gantt_chart;
+}
+
+======================================================
+filename :main.cpp
+
+#include"scheduling.h"
+
+void main(void){
+
+	int number_of_process = 7;
+	
+	process *arr1 = new process[number_of_process];
+	process *arr2 = new process[number_of_process];
+	process *arr3 = new process[number_of_process];
+	process *arr4 = new process[number_of_process];
+
+	
+	/*cout << "how many process you want to schedule ? :";
+	cin >> number_of_process;
+	arr1 = input(number_of_process); for manual input, enable this line; 
+	disable bellows codes until for loop*/
+
+	arr1[0].process_name = "P1";
+	arr1[0].arrival_time = 8;
+	arr1[0].brust_time = 1;
+	arr1[0].remain_time = arr1[0].brust_time;
+
+	arr1[1].process_name = "P2";
+	arr1[1].arrival_time = 5;
+	arr1[1].brust_time = 1;
+	arr1[1].remain_time = arr1[1].brust_time;
+
+	arr1[2].process_name = "P3";
+	arr1[2].arrival_time = 2;
+	arr1[2].brust_time = 7;
+	arr1[2].remain_time = arr1[2].brust_time;
+
+	arr1[3].process_name = "P4";
+	arr1[3].arrival_time = 4;
+	arr1[3].brust_time = 3;
+	arr1[3].remain_time = arr1[3].brust_time;
+
+	arr1[4].process_name = "P5";
+	arr1[4].arrival_time = 2;
+	arr1[4].brust_time = 8;
+	arr1[4].remain_time = arr1[4].brust_time;
+
+	arr1[5].process_name = "P6";
+	arr1[5].arrival_time = 4;
+	arr1[5].brust_time = 2;
+	arr1[5].remain_time = arr1[5].brust_time;
+
+	arr1[6].process_name = "P7";
+	arr1[6].arrival_time = 3;
+	arr1[6].brust_time = 5;
+	arr1[6].remain_time = arr1[6].brust_time;
+
+	arr1 = sort(arr1, number_of_process);
+
+	for (int i = 0;i < number_of_process;i++) {
+		arr2[i] = arr1[i];
+		arr3[i] = arr1[i];
+		arr4[i] = arr1[i];
+	}
+
+	first_come_first_serve(arr1, number_of_process);
+	sjf_non_preemptive(arr2, number_of_process);
+	sjf_preemptive(arr3, number_of_process);
+	round_robin(arr4, number_of_process, 3); //quantum is 3
+
+	delete[] arr1;
+	delete[] arr2;
+	delete[] arr3;
+	delete[] arr4;
+
+}
+
+
+
+
+
+
+

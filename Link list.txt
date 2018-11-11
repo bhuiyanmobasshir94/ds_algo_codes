@@ -1,0 +1,102 @@
+#include<iostream>
+
+using namespace std;
+
+class Node{
+private:
+	int value;
+	Node *Next_node;
+public:
+	Node();
+	~Node();
+	void set_value(int val);
+	int get_value();
+	void set_next_node(Node *address);
+	Node* Get_next_node();
+	
+};
+
+Node::Node(){
+	value = 0;
+	Next_node = NULL;
+}
+Node::~Node(){}
+
+void Node::set_value(int val){ value = val;}
+
+int Node::get_value(){ return value; }
+
+void Node::set_next_node(Node *Address){ Next_node = Address; }
+
+Node* Node::Get_next_node(){ return Next_node; }
+
+class link_list{
+private:
+	int size;
+	Node* Head_node;
+	Node* current_node;
+public:
+	link_list();
+	~link_list();
+	void add(int a);
+	void remove(){}
+	void Print_values_in_list();
+	void get_size(){ cout << "size: " << size << endl;; }
+};
+
+link_list::link_list(){
+	size = 0;
+	Head_node = NULL;
+	
+}
+
+link_list::~link_list(){}
+
+void link_list::add(int a){
+	Node *new_node = new Node;
+	new_node->set_value(a);
+	new_node->set_next_node(NULL);
+	
+	size++;
+	if (Head_node == NULL){
+		Head_node = new_node;
+		current_node =Head_node;
+	}
+	else{
+		current_node->set_next_node(new_node);
+		current_node = new_node;
+	}
+	//cout << "add sucessful!" << endl;
+	
+}
+
+void link_list::Print_values_in_list(){
+	
+	if (size == 0){ cout << "link list is empty!" << endl; }
+	else{
+		Node *temporary_node = Head_node;
+		cout << "value: ";
+		while(1){
+			cout << temporary_node->get_value() <<" ";
+			temporary_node = temporary_node->Get_next_node();
+			if (temporary_node->Get_next_node() == NULL){
+				cout << temporary_node->get_value() << endl;
+				break;
+			}
+		} 
+	}
+}
+
+void main(){
+	link_list ob;
+	ob.Print_values_in_list();
+	ob.get_size();
+
+	ob.add(4);
+	ob.add(5);
+	ob.add(6);
+
+
+	ob.get_size();
+	ob.Print_values_in_list();
+}

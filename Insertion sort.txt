@@ -1,0 +1,58 @@
+#include<iostream>
+
+using namespace std;
+
+#define size 10
+
+void copy_array(int *a, int *b, int sz){
+	for (int i = 0; i < sz; i++){
+		a[i] = b[i];
+	}
+}
+
+class insertion_sort{
+private:
+	int array[size];
+public:
+	insertion_sort(int *arr){ copy_array(array, arr, size); }
+	~insertion_sort(){}
+	void print_array(){
+		cout << "elements in array:";
+		for (int i = 0; i < size; i++){
+			cout << array[i] << " ";
+		}
+	}
+	void swap(int &a, int &b){
+		int temp;
+		temp = a;
+		a = b;
+		b = temp;
+	}
+	void sort(){
+		for (int i = 0; i < size; i++){
+			int j = i;
+			while(j>0 && array[j]<array[j-1]){
+				swap(array[j], array[j - 1]);
+				j--;
+				}
+
+			}
+
+		}
+
+};
+void main(){
+	int arr[size];
+	for (int i = 0; i < size; i++){
+		arr[i] = rand() % 100;
+	}
+
+	insertion_sort ob(arr);
+	cout << "before sorting: " << endl;;
+	ob.print_array();
+	ob.sort();
+	cout << "after sort:" << endl;
+	ob.print_array();
+
+
+}

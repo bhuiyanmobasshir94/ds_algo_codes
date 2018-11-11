@@ -1,0 +1,113 @@
+
+#include <iostream>
+using namespace std;
+
+// Node
+class Node{
+private:
+        int value;
+        Node* PNode;
+        Node* NNode;
+
+public:
+
+        void SetValue(int a){value = a;}
+        int GetValue(){return value;}
+        void SetPrvNode(Node* PN){PNode = PN;}
+        Node* GetPrvNode(){return PNode;}
+        void SetNextNode(Node* NN){NNode = NN;}
+        Node* GetNextNode(){return NNode;}
+};
+
+
+// Double Link List
+
+class DL{
+private:
+        Node* HN;
+        int size;
+        Node* FN;
+public:
+       DL();
+       void Insert(int a);
+       void Delete(int a);
+       int Getsize(){return size;}
+       int GetCNValue(){return HN->GetValue();}
+       Node* Begin(){return HN;}
+       void Print();
+};
+
+DL :: DL()
+{
+    HN = NULL;
+    size = 0;
+}
+
+void DL :: Insert(int a)
+{ Node* NewNode = new Node;
+    NewNode-> SetValue(a);
+    NewNode-> SetPrvNode(FN);
+    NewNode-> SetNextNode(HN);
+
+    if(HN == NULL)
+    {
+    HN = NewNode;
+    FN = HN;
+
+    }else{
+    FN->SetNextNode(NewNode);
+    HN->SetPrvNode(NewNode);
+   // FN = HN;
+    HN = NewNode;}
+    size++;
+}
+void DL :: Delete(int a)
+{
+ Node* dn = HN;
+    do{
+    if(dn->GetValue()==a){
+    if(dn == HN )
+    { HN = dn->GetNextNode();
+    (dn->GetNextNode())->SetPrvNode(dn->GetPrvNode());
+    (dn->GetPrvNode())->SetNextNode(dn->GetNextNode());
+    delete dn;
+    size--;
+    return;
+    }
+    Node* dn2 = dn->GetNextNode();
+    Node* dn3 = dn->GetPrvNode();
+    dn3->SetNextNode(dn2);
+    dn2->SetPrvNode(dn3);
+    delete dn;
+    size--;
+    }
+    dn = dn->GetNextNode();
+   }while(dn!=HN);
+}
+void DL :: Print()
+{   Node* temp = HN;
+    cout << "List is:"<< endl;
+   do
+    {cout<< temp->GetValue();
+        temp = temp->GetNextNode();
+    } while(temp!=HN);
+}
+int main()
+{
+
+	DL dl;
+	for (int i = 0,j = 10; i < 10; i++, j--){
+    dl.Insert(j);
+	}
+	Node* temp1 = dl.Begin();
+	int k =10;
+	do{
+    {for(int i=0;i<3;i++){
+    temp1 = temp1->GetNextNode();}
+    dl.Delete(temp1->GetValue());}
+    temp1=temp1->GetNextNode();
+    }while(dl.Getsize()>1);
+    dl.Print();
+	return 0;
+}
+

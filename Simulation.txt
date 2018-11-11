@@ -1,0 +1,417 @@
+#include<iostream>  
+#include<string>
+
+using namespace std;
+
+template<typename T>
+class Node{
+private:
+	T value;
+	Node<T> *Next_node;
+	Node<T> *Previous_node;
+public:
+	Node();
+	~Node();
+	void set_value(T val);
+	T get_value();
+	void set_next_node(Node<T> *address);
+	Node<T>* get_next_node();
+	void set_previous_node(Node<T> *address);
+	Node<T>* get_previous_node();
+};
+
+template<typename T>
+Node<T>::Node(){
+	//value = NULL; 
+	Next_node = NULL;
+	Previous_node = NULL;
+}
+
+template<typename T>
+Node<T>::~Node(){}
+
+template<typename T>
+void Node<T>::set_value(T val){ value = val; }
+
+template<typename T>
+T Node<T>::get_value(){ return value; }
+
+template<typename T>
+void Node<T>::set_next_node(Node<T> *Address){ Next_node = Address; }
+
+template<typename T>
+Node<T>* Node<T>::get_next_node(){ return Next_node; }
+
+template<typename T>
+void Node<T>::set_previous_node(Node<T>* address){ Previous_node = address; }
+
+template<typename T>
+Node<T>* Node<T>::get_previous_node(){ return Previous_node; }
+
+
+template<typename T>
+class Double_link_list{
+private:
+	Node<T> *Head_node;
+	Node<T> *Curent_node;
+	Node<T> *New_node;
+	int size;
+public:
+	Double_link_list();
+	~Double_link_list();
+	bool list_is_empty();
+	Node<T>* search_from_front(T value);
+	Node<T>* search_from_back(T value);
+	void push_in_front(T value);
+	void push_in_back(T value);
+	void pop_from_front();
+	void pop_from_back();
+	T get_front();
+	T get_back();
+	void print_values();
+	void print_values_in_reverse();
+	int get_size(){ return size; }
+	void delete_value(T value);
+	void handler();
+	void info_head_current();
+	void sort();
+	void swap(Node<T>* a, Node<T>* b);
+	Node<T>* get_begin(){ return Head_node; }
+	Node<T>* get_end(){ return Curent_node; }
+};
+
+template<typename T>
+void Double_link_list<T>::swap(Node<T>* a, Node<T>* b){
+	T x = a->get_value();
+	T y = b->get_value();
+	a->set_value(y);
+	b->set_value(x);
+}
+
+
+
+template<typename T>
+void Double_link_list<T>::sort(){          //selection sorting used
+	for (Node<T>* i = Head_node; i != NULL; i = i->get_next_node()){
+		for (Node<T>* j = Head_node; j != NULL; j = j->get_next_node()){
+			if (i->get_value() < j->get_value()){
+				swap(i, j);
+			}
+			else{
+				continue;
+			}
+		}
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::info_head_current(){
+	cout << "address of head node:" << Head_node << endl;
+	cout << "value in head node:" << Head_node->get_value() << endl;;
+	cout << "address in Head_node->get_next_node(): " << Head_node->get_next_node() << endl;
+	cout << "address in Head_node->get_previous_node:" << Head_node->get_previous_node() << endl;
+	cout << "address of current node:" << Curent_node << endl;
+	cout << "value in current node:" << Curent_node->get_value() << endl;
+	cout << "address in current_node->get_next_node(): " << Curent_node->get_next_node() << endl;
+	cout << "address in current_node->get_previous_node:" << Curent_node->get_previous_node() << endl;
+}
+
+template<typename T>
+bool Double_link_list<T>::list_is_empty(){
+	if (size == 0){ return true; }
+	else{ return false; }
+}
+
+template<typename T>
+Double_link_list<T>::Double_link_list(){
+	Head_node = NULL;
+	Curent_node = NULL;
+	New_node = NULL;
+	size = 0;
+}
+
+template<typename T>
+Double_link_list<T>::~Double_link_list(){
+	delete New_node;
+}
+
+template<typename T>
+Node<T>* Double_link_list<T>::search_from_front(T value){
+	if (list_is_empty() == true){
+		cout << "list is empty!" << endl;
+		return NULL;
+	}
+	else{
+		Node<T> *temporary_node = Head_node;
+		do{
+			if (temporary_node->get_value() == value){
+				return temporary_node;
+				break;
+			}
+			else{
+				temporary_node = temporary_node->get_next_node();
+			}
+		} while (temporary_node != NULL);
+		return NULL;
+	}
+}
+
+template<typename T>
+Node<T>* Double_link_list<T>::search_from_back(T value){
+	if (list_is_empty() == true){
+		cout << "list is empty!" << endl;
+		return NULL;
+	}
+	else{
+		Node<T> *temporary_node = Curent_node;
+		do{
+			if (temporary_node->get_value() == value){
+				return temporary_node;
+				break;
+			}
+			else{
+				temporary_node = temporary_node->get_previous_node();
+			}
+		} while (temporary_node != NULL);
+		return NULL;
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::push_in_back(T value){
+	New_node = new Node<T>;
+	New_node->set_value(value);
+	New_node->set_next_node(NULL);
+	New_node->set_previous_node(Curent_node);
+	size++;
+	if (Head_node == NULL){
+		New_node->set_previous_node(NULL);
+		Head_node = New_node;
+		Curent_node = Head_node;
+	}
+	else{
+		Curent_node->set_next_node(New_node);
+		Curent_node = New_node;
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::push_in_front(T value){
+	New_node = new Node<T>;
+	New_node->set_value(value);
+	New_node->set_next_node(Head_node);
+	New_node->set_previous_node(NULL);
+	size++;
+	if (Head_node == NULL){
+		New_node->set_previous_node(NULL);
+		New_node->set_next_node(NULL);
+		Head_node = New_node;
+		Curent_node = Head_node;
+	}
+	else{
+		Head_node->set_previous_node(New_node);
+		Head_node = New_node;
+	}
+
+}
+
+
+template<typename T>
+void Double_link_list<T>::pop_from_front(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Head_node = Head_node->get_next_node();
+		Head_node->set_previous_node(NULL);
+		size--;
+		//cout << "pop sucessful!" << endl;
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::pop_from_back(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Curent_node = Curent_node->get_previous_node();
+		Curent_node->set_next_node(NULL);
+		size--;
+		//cout << "pop sucessful!" << endl;
+	}
+}
+
+template<typename T>
+T Double_link_list<T>::get_front(){
+	return Head_node->get_value();
+}
+
+template<typename T>
+T Double_link_list<T>::get_back(){
+	return Curent_node->get_value();
+}
+
+template<typename T>
+void Double_link_list<T>::delete_value(T value){
+
+	if (search_from_back(value) == NULL){
+		cout << "requested value did not found!" << endl;
+	}
+	else if (search_from_back(value) == Curent_node){
+		pop_from_back();
+	}
+	else if (search_from_back(value) == Head_node){
+		pop_from_front();
+	}
+	else{
+		Node<T>* temporaray_node = search_from_back(value);
+		Node<T> *n1 = temporaray_node->get_previous_node(), *n2 = temporaray_node->get_next_node();
+		n1->set_next_node(n2);
+		n2->set_previous_node(n1);
+		size--;
+		cout << "deleted!" << endl;
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::print_values(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Node<T> *temporary_node = Head_node;
+		cout << "values: ";
+		do{
+			cout << temporary_node->get_value() << " ";
+			temporary_node = temporary_node->get_next_node();
+		} while (temporary_node != NULL);
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::print_values_in_reverse(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Node<T> *temporary_node = Curent_node;
+		cout << "values: ";
+		do{
+			cout << temporary_node->get_value() << " ";
+			temporary_node = temporary_node->get_previous_node();
+		} while (temporary_node != NULL);
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::handler(){
+	int sel = 0, q = 0;
+	T val = NULL;
+	char n = '\0';
+	while (n != 'e' && n != 'E'){
+		cout << "press 1 to display the properties of the Double link list\n" << endl;
+		cout << "press 2 to push in the back random values\n" << endl;
+		cout << "press 3 to display the values sortly" << endl;
+		cin >> sel;
+		switch (sel){
+		case 1:
+			print_values();
+			get_size();
+			break;
+		case 2:
+			cout << "how many ramdom values you want to push?\nEnter quantity:";
+			cin >> q;
+			cout << "now enter " << q << " values" << endl;
+			for (int i = 0; i < q; i++){
+				val = rand() % 100;
+				push_in_back(val);
+			}
+			break;
+		case 3:
+			sort();
+			print_values();
+			break;
+		default:
+			//info_head_current();
+			break;
+		}
+		cout << "Enter e to exit or c to continue:";
+		cin >> n;
+	}
+}
+
+class queue_by_link_list{
+private:
+	Double_link_list<int> queue;
+public:
+	queue_by_link_list(){}
+	~queue_by_link_list(){}
+	void Enqueue(int value){ queue.push_in_back(value); }
+	void Dequeue(){ queue.pop_from_front(); }
+	int size(){ return queue.get_size(); }
+	void print_values(){ queue.print_values(); }
+	void sort(){ queue.sort(); }
+	int get_front(){ return queue.get_front(); }
+};
+
+
+void main(){
+
+	queue_by_link_list line;
+
+	int time=0,waited_time=0,mean_waited_time=0,total_waited_time=0,number_of_total_pick=0,total_number_of_bus=0;
+
+	for (int i = 0, j = 0,bus_time = rand() % 25; i < 720;){    //for 12 hours
+		
+		if (j == bus_time){
+			cout << "\nbus arrived!\narrival time: " <<bus_time<< endl;
+			total_number_of_bus++;
+			i += bus_time;                //time skip
+			j = 0;          
+			bus_time = rand() % 25 ;     //new time for bus arriving
+
+			int number_of_picking = (rand() % 15);
+
+			number_of_total_pick += number_of_picking;
+
+			cout << "\nthis bus will carry: " << number_of_picking << endl;
+			
+				if (number_of_picking > line.size()){      //if bus could carry more the line's number
+					cout << "not enough passenger in line!\nso bus will carry the whole line." << endl;
+					while(line.size() != 0 ){                  //picking passenger
+						waited_time = (line.get_front() - bus_time);
+						total_waited_time += waited_time;
+						line.Dequeue();
+						cout << "person waited " << waited_time << " min" << endl;
+					}
+				}
+				else{
+					for (int i = 0; i < number_of_picking; i++){        //picking passenger
+						waited_time = (bus_time - line.get_front());
+		
+						total_waited_time += waited_time;
+						line.Dequeue();
+
+						if (waited_time < 0){              //this person came exactly when the bus arrived
+							cout << "person waited 0 min" << endl;
+						}
+						else{
+							cout << "person waited " << waited_time << " min" << endl;
+						}
+					}
+				}	
+		}
+		else{
+			time = rand() % 30;
+			line.Enqueue(time);
+			i++;
+			j++;
+			line.sort();  
+		}
+		
+	}
+
+	mean_waited_time = (total_waited_time / number_of_total_pick);
+
+	cout << "\ntotal number of arrived bus:" << total_number_of_bus << endl;
+	cout << "\ntotal number of carried person:" << number_of_total_pick << endl; 
+	cout << "\ntotal waited time " << total_waited_time << endl;
+	cout << "\mean waited time: " << mean_waited_time << endl;
+
+	cout << "rest of the line:";
+	line.print_values();
+		
+}

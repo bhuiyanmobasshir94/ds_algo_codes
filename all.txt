@@ -1,0 +1,477 @@
+#include<iostream>
+
+using namespace std;
+
+class recurssion{
+private:
+
+	long long int value ;
+
+public:
+	recurssion(){ value = ~0; }
+	~recurssion(){}
+	int factorial(int n){
+		if (n == 1){ cout << "now n=1" << endl; value = 1; }
+		else{
+			cout << "pasing value->"<<n-1 <<" to factorial funtion "<< endl;
+			value = n*(factorial(n - 1));
+		}
+		cout << "returning value->" << value << endl;
+		return value;
+	}
+
+	int fibonacci(int n){
+		int x = 0, y = 0;
+		if (n <= 0){ value = 0; }
+		else if (n == 1){ value = 1; }
+		else{ 
+			 x = fibonacci(n - 1);
+			 y = fibonacci(n - 2);
+			value = x + y;
+		}
+		return value;
+	}
+	int sumatiuon(int n){
+		if (n == 1){ value = 1; }
+		else{
+			value = n + sumatiuon(n - 1);
+		}
+		return value;
+	}
+	
+};
+
+
+void main(){
+	recurssion ob;
+
+	cout << "factorial of 5:" << ob.factorial(5) << endl;
+	//cout << "factorial of 50:" << ob.factorial(50) << endl;
+	//cout << "factorial of 500:" << ob.factorial(500) << endl;
+	cout << "enter a value to find the fibonacci:";
+	int val;
+	cin >> val;
+
+	cout << "fibonacci of " << val << " " << ob.fibonacci(val) << endl;
+
+	cout << "sumation of 100: " << ob.sumatiuon(100) << endl;
+		
+
+}
+__________________________________________________________________________
+#include<iostream>  
+
+using namespace std;  
+
+class Node{  
+private:
+	int value;   
+	Node *Next_node;  
+	Node *Previous_node;  
+public:
+	Node();     
+	~Node();   
+	void set_value(int val); 
+	int get_value();  
+	void set_next_node(Node *address);  
+	Node* get_next_node(); 
+	void set_previous_node(Node *address);  
+	Node* get_previous_node();  
+};
+
+Node::Node(){
+	value = 0;  
+	Next_node = NULL; 
+	Previous_node = NULL; 
+}
+
+Node::~Node(){}
+
+void Node::set_value(int val){ value = val; } 
+
+int Node::get_value(){ return value; }  
+
+void Node::set_next_node(Node *Address){ Next_node = Address; }  
+
+Node* Node::get_next_node(){ return Next_node; }  
+
+void Node::set_previous_node(Node* address){ Previous_node = address; }  
+
+Node* Node::get_previous_node(){ return Previous_node; }  
+
+class Double_link_list{   
+private:
+	Node *Head_node;   
+	Node *Curent_node;   
+	Node *New_node;     
+	int size;          
+public:
+	Double_link_list();   
+	~Double_link_list(); 
+	bool list_is_empty(); 
+	Node* search_from_back(int val);  
+	void push_in_back(int value); 
+	void print_values();  
+	void swap(Node *a, Node *b);
+	void sort();
+};
+
+void Double_link_list::swap(Node* a, Node* b){
+	int x = a->get_value();
+	int y = b->get_value();
+	a->set_value(y);
+	b->set_value(x);
+}
+
+
+void Double_link_list::sort(){
+	       //selection sorting used
+		for (Node* i = Head_node; i != NULL; i = i->get_next_node()){
+			for (Node* j = Head_node; j != NULL; j = j->get_next_node()){
+				if (i->get_value() < j->get_value()){
+					swap(i, j);
+				}
+				else{
+					continue;
+				}
+			}
+		}
+	
+}
+
+bool Double_link_list::list_is_empty(){
+	if (size == 0){ return true; }
+	else{ return false; }
+}
+
+Double_link_list::Double_link_list(){
+	Head_node = NULL;  
+	Curent_node = NULL;  
+	New_node = NULL; 
+	size = 0; 
+}
+
+Double_link_list::~Double_link_list(){
+	delete New_node;  
+}
+
+
+Node* Double_link_list::search_from_back(int val){
+	if (list_is_empty() == true){
+		cout << "list is empty!" << endl;
+		return NULL;
+	}
+	else{
+		Node *temporary_node = Curent_node;
+		while (temporary_node != NULL){
+			if (temporary_node->get_value() == val){
+				return temporary_node;
+				break;
+			}
+			else{
+				temporary_node = temporary_node->get_previous_node();
+			}
+		}
+		return NULL;
+	}
+}
+
+void Double_link_list::push_in_back(int value){
+	New_node = new Node;
+	New_node->set_value(value);
+	New_node->set_next_node(NULL);
+	size++;
+	if (Head_node == NULL){
+		New_node->set_previous_node(NULL);
+		Head_node = New_node;
+		Curent_node = Head_node;
+	}
+	else{
+		Curent_node->set_next_node(New_node);
+		New_node->set_previous_node(Curent_node);
+		Curent_node = New_node;
+	}
+}
+
+void Double_link_list::print_values(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Node *temporary_node = Head_node;
+		cout << "values: ";
+		while (temporary_node != NULL){
+			cout << temporary_node->get_value() << " ";
+			temporary_node = temporary_node->get_next_node();
+		}
+	}
+}
+
+
+
+
+#define size 10
+
+void swap(int &a, int &b){
+	int temp = a;
+	a = b;
+	b = temp;
+}
+
+int partition(int *a, int lm, int rm){
+	int i = lm;
+	int j = rm;
+	int pivot = a[(lm + rm) / 2];
+	while (i <= j){
+		if (a[i] < pivot)i++;
+		else if (a[j] > pivot)j--;
+		else{
+			swap(a[i], a[j]);
+			i++;
+			j--;
+		}
+	}
+	return i;
+}
+
+class linear_search{
+private:
+	int Array[size];
+	Double_link_list list;
+public:
+	linear_search(){}
+	~linear_search(){}
+	void push_value_in_array(){
+		for (int i = 0; i < size; i++){
+			Array[i] = rand() % 101;
+		}
+	}
+	void push_value_in_list(){
+		for (int i = 0; i < size; i++){
+			list.push_in_back(rand() % 101);
+		}
+	}
+	void print_list(){
+		list.print_values();
+		cout << endl;
+	}
+	void search_from_list(int value){
+		if (list.search_from_back(value) != NULL){
+			cout << "found!" << endl;
+		}
+		else{
+			cout << "not found!" << endl;
+		}
+	}
+	void print_array(){
+		cout << "values: ";
+		for (int i = 0; i < size; i++){
+			cout << Array[i] << " ";
+		}
+		cout << endl;
+	}
+	void linear_search_for_array(int value){
+		for (int i = 0; i < size; i++){
+			if (Array[i] == value){
+				cout << "found!" << endl;
+				
+			}
+			else{
+				continue;
+			}
+		}
+		cout << "not found!" << endl;
+	}
+
+};
+
+class binary_search{
+private:
+	int Array[size];
+	Double_link_list list;
+public:
+	binary_search(){}
+	~binary_search(){}
+	
+	void push_value_in_list(){
+		for (int i = 0; i < size; i++){
+			list.push_in_back(rand() % 101);
+		}
+	}
+	void print_list(){
+		list.print_values();
+		cout << endl;
+	}
+	void list_sort_by_selection_method(){
+		list.sort();
+	}
+	void quick_sort_for_array(int *a,int lm,int rm){
+		int index = partition(a, lm, rm);
+		if (lm < index - 1){
+			quick_sort_for_array(a, lm, index - 1);
+		}
+		if (index < rm){
+			quick_sort_for_array(a, index, rm);
+		}
+	}
+	int binary_search_for_array(int *a,int lm,int rm,int value){
+
+		int position_of_pivot = (lm + rm) / 2;
+		int pivot = a[position_of_pivot];
+
+		if (value == a[position_of_pivot]) return position_of_pivot;
+		else if (lm > rm) return -1;
+		else{
+			if (value > pivot){
+					binary_search_for_array(a, position_of_pivot + 1, rm, value);
+			}
+			if (value < pivot){
+					binary_search_for_array(a, lm, position_of_pivot - 1, value);
+				}
+			}
+		}
+};
+
+
+void main(){
+	linear_search ob;
+	ob.push_value_in_array();
+	ob.print_array();
+	cout << "searching in array for 45..." << endl;
+	ob.linear_search_for_array(45);
+
+	ob.push_value_in_list();
+	ob.print_list();
+	cout << "searching in list for 61..." << endl;
+	ob.search_from_list(61);*/
+
+	int Array[size];
+
+	for (int i = 0; i < size; i++){
+		Array[i] = rand() % 101;
+	}
+	cout << "values: ";
+	for (int i = 0; i < size; i++){
+		cout << Array[i] << " ";
+	}
+	cout << endl;
+	binary_search obb;
+	obb.quick_sort_for_array(Array, 0, 9);
+
+	cout << "after sort\nvalues: ";
+	for (int i = 0; i < size; i++){
+		cout << Array[i] << " ";
+	}
+
+	cout << endl;
+
+	cout << "searching 68 by binary method.." << endl;
+
+	int c = obb.binary_search_for_array(Array, 0, 9, 68);
+	if (c > 1){
+		cout << "found at "<< c <<"position"<< endl;
+	}
+	else{
+		cout << "not found" << endl;
+	}
+
+	obb.push_value_in_list();
+	obb.print_list();
+	obb.list_sort_by_selection_method();
+	obb.print_list();
+
+
+
+}
+_______________________________________________________________
+#include<iostream>
+
+using namespace std;
+
+
+void print_Array(int *a, int size){
+	for (int i = 0; i < size; i++){
+		cout << a[i] << " ";
+	}
+	cout << endl;
+}
+
+void removing_negatives(int *a, int size){
+	for (int i = 0; i < size; i++){
+		if (a[i] < 0){
+			cout << "found one!" << endl;
+			for (int j = i; j < size; j++){
+				a[j] = a[j + 1];
+			}
+			size--;
+		}
+	}
+	cout << "after removing negatives:";
+	for (int i = 0; i < size; i++){
+		cout << a[i] << " ";
+	}
+	cout << endl;
+}
+void removing_odd_counts(int *a, int size){
+	for (int i = 0; i < size; i++){
+		if (i % 2 == 0){
+			continue;
+		}
+		else{
+			for (int j = i; j < size; j++){
+				a[j] = a[j + 1];
+			}
+			size--;
+		}
+	}
+	cout << "after removing odd count: ";
+	for (int i = 0; i < size; i++){
+		cout << a[i] << " ";
+	}
+}
+
+void distincs_counter(int *a, int size){
+	int  count = 0;
+	for (int i = 0; i < size; i++){	
+		for (int j = 0; j < size; j++){
+			if (a[j] == a[i])count++;
+			else continue;
+		}
+		cout << a[i] << " <-exits: " << count << "times" << endl;
+		count = 0;
+	}
+}
+
+void find_majorent(int *a, int size){
+	int majorent = size / 2 + 1,count=0;
+	for (int i = 0; i < size; i++){
+		for (int j = 0; j < size; j++){
+			if (a[j] == a[i])count++;
+			else continue;
+		}
+		if (count >= majorent){
+			cout << "majorent exits\nmajorent is :" << a[i] << endl;
+			break;
+		}
+		else{
+			count = 0;	
+		}	
+	}
+}
+
+void main(){
+	int a[7] = { 2, 5, -7, 8, -2, 5, -1 };
+	print_Array(a, 7);
+	removing_negatives(a, 7);
+
+	int b[11] = { 4, 2, 2, 5, 2, 3, 2, 3, 1, 5, 2 };
+	print_Array(b, 11);
+	removing_odd_counts(b, 11);
+	cout << endl;
+
+	int c[9] = { 3, 4, 4, 2, 3, 3, 4, 3, 2 };
+	print_Array(c, 9);
+	distincs_counter(c, 9);
+
+	int d[9] = { 2, 2, 3, 3, 2, 4, 3, 3, 3 };
+	print_Array(d, 9);
+	find_majorent(d, 9);
+}

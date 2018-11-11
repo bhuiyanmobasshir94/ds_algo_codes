@@ -1,0 +1,270 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+
+template <typename T>
+class DynamicStack {
+private:
+	T *A;
+	int top;
+public:
+	DynamicStack();
+	~DynamicStack();
+	bool IsEmpty();
+	bool Push(T a);
+	bool Pop();
+	T GetTop();
+	int Size();
+};
+
+template <typename T>
+void CopyArray(T *C, T *D, int Size) {
+	for (int i = 0; i < Size; i++) {
+		C[i] = D[i];
+	}
+}
+
+template <typename T>
+DynamicStack<T> ::DynamicStack() :
+top(0) {  }
+
+template <typename T>
+DynamicStack<T> :: ~DynamicStack() {
+	delete[] A;
+}
+
+template <typename T>
+bool DynamicStack<T> ::IsEmpty() {
+	if (top == 0) return true;
+	else return false;
+}
+
+template <typename T>
+bool DynamicStack<T> ::Push(T a) {
+	if (top == 0) {
+		top++;
+		A = new T[top];
+		A[top - 1] = a;
+		return true;
+	}
+	else {
+		T *B = new T[top];
+
+		CopyArray(B, A, top);
+
+		delete[] A;
+
+		top++;
+		A = new T[top];
+		CopyArray(A, B, top - 1);
+		A[top - 1] = a;
+		return true;
+	}
+}
+
+template <typename T>
+bool DynamicStack<T> ::Pop() {
+	if (IsEmpty()) return false;
+	else {
+		top--;
+		T *B = new T[top];
+
+		CopyArray(B, A, top);
+
+		delete[] A;
+		A = new T[top];
+		CopyArray(A, B, top);
+	}
+}
+
+template <typename T>
+T DynamicStack<T> ::GetTop() {
+	return A[top - 1];
+}
+
+template <typename T>
+int DynamicStack<T> ::Size() {
+	return top;
+}
+
+
+int priority_of(char a){
+	if (a == '(') return 1;
+	else if (a == '+' || a == '-')return 2;
+	else if (a == '*' || a == '/')return 3;
+	else if (a == '^')return 4;
+	else return 0;
+}
+
+class Converter{
+private:
+	float result;
+	DynamicStack<char> stack;
+	DynamicStack<float> stack_res;
+	string input;
+	string output;
+public:
+	Converter(string &a);
+	~Converter();
+	void To_postfix();
+	void gen_result();
+	void getresult();
+	void get_output();
+	void get_input();
+};
+
+Converter::Converter(string &a){
+	result = 0;
+	output="";
+	input = a;
+}
+Converter::~Converter(){}
+
+void Converter::get_input(){ 
+	cout << "input was:" << input << endl;
+}
+
+
+void Converter::get_output(){
+	cout << "after postfix:";
+	for (int i = 0; i < output.length(); i++){
+		cout << output[i]<<" ";
+	}
+	cout <<"\n"<< endl;
+}
+
+void Converter::getresult(){ 
+	cout << "result of "<<output<<"=" << result <<"\n"<< endl;
+}
+
+void Converter::To_postfix(){
+	
+	for (int i = 0; i < input.length(); i++){
+		if (input[i] >= '0' && input[i]<= '9')
+		{
+			output.push_back(input[i]);
+		}
+		else if (input[i] == '(' ){
+			stack.Push(input[i]);
+		}
+		else if (input[i] == '*' || input[i] == '/'|| input[i] == '+' || input[i] == '-' || input[i]=='^'){
+			if (stack.Size() == 0){
+				stack.Push(input[i]);
+			}
+			else{
+				while (1){
+					if (priority_of(stack.GetTop()) > priority_of(input[i])){
+						output.push_back(stack.GetTop());
+						stack.Pop();
+						continue;
+					}
+					else if (priority_of(stack.GetTop()) < priority_of(input[i]) || priority_of(stack.GetTop()) == priority_of(input[i])){
+						stack.Push(input[i]);
+						break;
+					}
+				}
+			}
+		}
+		else if(input[i] == ')'){
+			while (stack.GetTop() != '('){
+				output.push_back(stack.GetTop());
+				stack.Pop();
+			}
+			stack.Pop();
+		}
+		else if (input[i] == ' '){
+			continue;
+		}
+		else{
+			cout << "invalid oparend or oroparator found!" << endl;	
+		}
+	}
+	while (stack.IsEmpty() != true){
+		output.push_back(stack.GetTop());
+		stack.Pop();
+	}
+}
+
+void Converter::gen_result(){
+	float oparand1 = 0, oparand2 = 0;
+	for (int i = 0; i < output.length(); i++){
+		if (output[i] >='0' && output[i] <='9' ){
+			char A = output[i];
+			stack_res.Push(strtof(&A,NULL));
+		}
+		else if (output[i] == '+' ){
+			oparand1 = stack_res.GetTop();
+			stack_res.Pop();
+			oparand2= stack_res.GetTop();
+			stack_res.Pop();
+			stack_res.Push(oparand2 + oparand1);
+		}
+		else if (output[i] == '-'){
+			oparand1 = stack_res.GetTop();
+			stack_res.Pop();
+			oparand2 = stack_res.GetTop();
+			stack_res.Pop();
+			stack_res.Push(oparand2 - oparand1);
+		}
+		else if (output[i] == '*'){
+			oparand1 = stack_res.GetTop();
+			stack_res.Pop();
+			oparand2 = stack_res.GetTop();
+			stack_res.Pop();
+			stack_res.Push(oparand2 * oparand1);
+		}
+		else if (output[i] == '/'){
+			oparand1 = stack_res.GetTop();
+			stack_res.Pop();
+			oparand2 = stack_res.GetTop();
+			stack_res.Pop();
+			stack_res.Push(oparand2 / oparand1);
+		}
+		else{
+			cout << "invalid oparator found!" << endl;
+		}
+	}
+	result = stack_res.GetTop();
+}
+
+void main(){
+	string infix_1 = "(6+3)*2";
+
+	string infix_2 = "3+4*5/6";
+
+	string infix_4 = "(4 + 8)*(6 - 5) / ((3 - 2)*(2 + 2))";
+
+	string infix_5 = "((6 - (2 + 3))*(3 + 8 / 2)) ^ 2 + 3";
+
+
+	Converter ob1(infix_1);
+	ob1.To_postfix();
+	ob1.get_input();
+	ob1.get_output();
+	ob1.gen_result();
+	ob1.getresult();
+
+	Converter ob2(infix_2);
+	ob2.To_postfix();
+	ob2.get_input();
+	ob2.get_output();
+	ob2.gen_result();
+	ob2.getresult();
+
+
+	Converter ob4(infix_4);
+	ob4.To_postfix();
+	ob4.get_input();
+	ob4.get_output();
+	ob4.gen_result();
+	ob4.getresult();
+	
+
+	Converter ob5(infix_5);
+	ob5.To_postfix();
+	ob5.get_input();
+	ob5.get_output();
+	ob5.gen_result();
+}

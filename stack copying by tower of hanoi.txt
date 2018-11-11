@@ -1,0 +1,82 @@
+#include<iostream>
+
+using namespace std;
+
+#define size 10
+
+template<typename T>
+class stack{
+private:
+	char a;
+	T stack_array[size];
+	int top = 0;
+public:
+	bool is_empty(){
+		if (top == 0)return true;
+		else return false;
+	}
+	bool is_full(){
+		if (top == size)return true;
+		else return false;
+	}
+	void push(T value){
+		if (is_full() == true){ cout << "stack is full!" << endl; }
+		else{
+			stack_array[top] = value;
+			top++;
+		}
+	}
+	T pop(){
+		if (is_empty() == true){ cout << "stack is empty!"<<endl;}
+		else{
+			T val = stack_array[--top];
+			return val;
+		}
+	}
+	void print_values(){
+		if (is_empty() == true){ cout << "stack is empty!" << endl; }
+		else{
+			for (int i = 0; i < top; i++){
+				cout << stack_array[i] << " ";
+			} 
+			cout << endl;
+		}
+	}
+};
+
+
+void copy_by_hanoi_method(int n, stack<int> &A, stack<int> &B, stack<int> &C){
+	if (n == 1){
+		B.push(A.pop());
+	}
+	else{
+		copy_by_hanoi_method(n - 1, A, C, B);
+		copy_by_hanoi_method( 1, A, B, C);
+		copy_by_hanoi_method(n - 1, C, B, A);
+	}
+}
+
+
+
+void main(){
+	stack<int> A;
+	stack<int> B;
+	stack<int> C;
+	for (int i = 5; i != 0; i--){
+		A.push(i);
+	}
+	cout << "values of A: ";
+	A.print_values();
+
+	cout << "values of B: ";
+	B.print_values();
+	
+	copy_by_hanoi_method(5, A, B, C);
+	
+	cout << "after copying:" << endl;
+	cout << "A has: ";
+	A.print_values();
+
+	cout << "B has: ";
+	B.print_values();
+}

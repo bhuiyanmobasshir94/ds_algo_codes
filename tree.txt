@@ -1,0 +1,223 @@
+#include<iostream>  
+#include<string>
+
+using namespace std;
+
+template<typename T>
+class Node{
+private:
+	T value;
+	Node<T> *Right_node;
+	Node<T> *Left_node;
+public:
+	Node();
+	~Node();
+	void set_value(T val);
+	T get_value();
+	void set_right_node(Node<T> *address);
+	Node<T>* get_right_node();
+	void set_left_node(Node<T> *address);
+	Node<T>* get_left_node();
+};
+
+template<typename T>
+Node<T>::Node(){
+	Right_node = NULL;
+	Left_node = NULL;
+}
+
+template<typename T>
+Node<T>::~Node(){ delete Right_node; delete Left_node; }
+
+template<typename T>
+void Node<T>::set_value(T val){ value = val; }
+
+template<typename T>
+T Node<T>::get_value(){ return value; }
+
+template<typename T>
+void Node<T>::set_right_node(Node<T> *Address){ Right_node = Address; }
+
+template<typename T>
+Node<T>* Node<T>::get_right_node(){ return Right_node; }
+
+template<typename T>
+void Node<T>::set_left_node(Node<T>* address){ Left_node = address; }
+
+template<typename T>
+Node<T>* Node<T>::get_left_node(){ return Left_node; }
+
+
+template<typename T>
+class tree{
+private:
+	Node<T>* Root;
+	Node<T>* parent;
+	int size = 0;
+public:
+	tree(){ Root = NULL; parent = NULL; }
+	~tree(){ delete parent; }
+	void add_value(T value);
+	bool is_empty();
+	Node<T>* search_value(T value);
+	void pre_order(Node<T>* NN);
+	void in_order(Node<T>* NN);
+	void post_order(Node<T>* NN);
+	Node<T>* get_root(){ return Root; }
+	void binary_search_by_recursion(T value, Node<T>* r);
+};
+
+template<typename T>
+void tree<T>::binary_search_by_recursion(T value, Node<T>* r){
+	if (r == NULL){ cout << "not found" << endl; }
+	else if ( value==r->get_value()){ cout << "found" << endl; }
+	else{
+		if(value < r->get_value()){
+			binary_search_by_recursion(value, r->get_left_node());
+		}
+		if(value > r->get_value()){
+			binary_search_by_recursion(value, r->get_right_node());
+		}
+	}
+}
+
+
+template<typename T>
+void tree<T>::pre_order(Node<T>* NN){
+	if (NN != NULL){
+		cout << NN->get_value() << endl;
+		pre_order(NN->get_left_node());
+		pre_order(NN->get_right_node());
+	}
+}
+
+template<typename T>
+void tree<T>::in_order(Node<T>* NN){
+	if (NN != NULL){
+		
+		pre_order(NN->get_left_node());
+		cout << NN->get_value() << endl;
+		pre_order(NN->get_right_node());
+	}
+}
+
+template<typename T>
+void tree<T>::post_order(Node<T>* NN){
+	if (NN != NULL){
+		pre_order(NN->get_left_node());
+		pre_order(NN->get_right_node());
+		cout << NN->get_value() << endl;
+	}
+}
+
+template<typename T>
+bool tree<T>::is_empty(){
+	if (size == 0) return true;
+	else return false;
+}
+
+template<typename T>
+Node<T>* tree<T>::search_value(T value){
+	if (is_empty() == true)return NULL;
+	else{
+		Node<T>* p = Root;   
+		Node<T>* q = Root;  
+		while (P->get_value() != value && q != NULL){
+			p = q;
+			if (value < p->get_value()){
+				q = p->get_left_node();
+			}
+			else if(p->get_value()==value){
+				return p;
+				break;
+			}
+			else{
+				q = p->get_right_node();
+			}
+		} 
+	}
+}
+
+template<typename T>
+void tree<T>::add_value(T value){
+	parent = new Node<T>;
+	parent->set_value(value);
+	parent->set_right_node(NULL);
+	parent->set_left_node(NULL);
+	
+	if (Root == NULL){
+		Root = parent;
+		size++;
+		cout << "added" << endl;
+	}
+	else{
+		Node<T> *p = Root;
+		Node<T>* q = Root;
+		while (p->get_value() != value && q != NULL){
+			p = q;
+			if (value< p->get_value()){
+				q = p->get_left_node();
+			}
+			else{
+				q = p->get_right_node();
+			}
+		}
+		if (p->get_value() == value){
+			cout << "same value will not be added" << endl;
+		}
+		else if (value < p->get_value()){
+			p->set_left_node(parent);
+			size++;
+			cout << "added" << endl;
+		}
+		else{
+			p->set_right_node(parent);
+			size++;
+			cout << "added" << endl;
+		}
+	}
+}
+
+void main(){
+	tree<int> ob;
+	ob.add_value(25);
+	ob.add_value(86);
+	ob.add_value(6);
+	ob.add_value(3);
+	ob.add_value(35);
+
+	cout << "printing pre orderly:" << endl;
+	ob.pre_order(ob.get_root());
+
+	cout << "printing in orderly:" << endl;
+	ob.in_order(ob.get_root());
+
+	cout << "printing post orderly:" << endl;
+	ob.post_order(ob.get_root());
+
+	cout << "searching for 85..." << endl;
+	ob.binary_search_by_recursion(85,ob.get_root());
+
+	cout << "searching for 6..." << endl;
+	ob.binary_search_by_recursion(6,ob.get_root());
+	cout << endl;
+
+
+}
+
+
+
+node* recursive_search_for_address(node* temp, int value){
+        node* addr=NULL;
+        if (temp == NULL){ addr = NULL; }
+        else if (temp->value == value){ addr = temp; }
+        else{
+            if (value > temp->value){
+                addr=recursive_search_for_address(temp->right, value);
+            }
+            if (value < temp->value){
+                addr= recursive_search_for_address(temp->left, value);
+            }
+        }
+        return addr;
+    }

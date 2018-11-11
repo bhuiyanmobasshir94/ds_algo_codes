@@ -1,0 +1,103 @@
+       
+ #include<iostream>
+#include<cstdio>
+#include<conio.h>
+
+
+
+using namespace std;
+
+void delete_array(int *a){
+	
+}
+
+
+void main(void){
+
+	int *size=new int(0);
+
+	cout<<"enter the array size:";
+	cin>>*size;
+
+	int *p;
+	p=new int[*size];
+
+	cout<<"enter "<<*size<<" number: "<<endl;
+
+	int *sum=new int(0);
+
+	for(int i=0;i<*size;i++){
+		cin>>p[i];
+		*sum +=p[i];
+	}
+	cout<<"sum="<<*sum<<endl;
+
+	cout<<"these are the elements of array:";
+
+	for(int i=0;i<*size;i++){
+		cout<<p[i]<<" ";
+	}
+
+	cout<<"\nenter the number you want to delete:";
+	int c=0;
+	cin>>c;
+	
+	//second way
+
+	int *b=new int[*size -1];
+
+	for(int i=0,j=0;i<*size;i++){
+		if(p[i]==c)continue;
+		else if(p[i] != c){
+			b[j]=p[i];
+			j++;
+		}
+		else{
+			cout<<"didn't find the number"<<endl;
+		}
+	}
+	cout<<"after delete:";
+	for(int i=0;i<*size-1;i++){
+		cout<<b[i]<<" ";
+	}
+	//frist way
+	/*for(int i=0;i<*size;i++){
+		if(p[i]==c){
+			p[i]=p[i+1];
+			p[i+1]=p[*size-1];
+			p[*size-1]=0;
+		}
+		else{
+			cout<<"didn't find the number!"<<endl;
+		}
+	}
+	cout<<"after delete:";
+	for(int i=0;i<*size-1;i++){
+		cout<<p[i]<<" ";
+	}*/
+	delete [] p;
+	delete size;
+	delete sum;
+
+	/*int *p;
+	p=new int[5];
+
+	cout<<"p="<<p<<endl;
+	*p=10;
+	cout<<"*p="<<*p<<endl;
+
+	cout<<p<<"\t"<<&p[0]<<endl;
+
+	p[0]=25;
+	cout<<"p[0]="<<p[0]<<endl;
+
+	delete [] p;
+
+	p=new int;
+
+	cout<<"p="<<p<<endl;
+	*p=10;
+	cout<<"*p="<<*p<<endl;
+
+	delete p;*/
+}

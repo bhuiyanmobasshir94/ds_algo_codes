@@ -1,0 +1,104 @@
+#include "Node.h"
+
+class BT {
+public:
+	BT ();
+	~BT ();
+	void SetRoot(Node* R);
+	Node* GetRoot ();
+	void Insert (int a);
+	void PreOrder (Node* N);
+	Node* FindMin (Node* N);
+	Node* Delete (Node* N, int a);
+private:
+	Node* Root;
+};
+
+BT :: BT () {
+	Root = NULL;
+}
+
+BT :: ~BT () {
+	delete Root;
+}
+
+void BT :: SetRoot(Node* R) {
+	Root = R;
+}
+
+Node* BT :: GetRoot () {
+	return Root;
+}
+
+void BT :: Insert (int a) {
+	if (GetRoot () == NULL) {
+		Node* NN = new Node (a);
+		SetRoot (NN);
+	}
+	else {
+		Node *p, *q;
+		p = q = GetRoot();
+		while (p->GetValue() != a && q != NULL ) {
+			p = q;
+			if (p->GetValue() < a)
+				q = p->GetRight();
+			else 
+				q = p->GetLeft();
+		}
+
+		if (p->GetValue() == a)
+			cout << "Duplicate Value" << endl;
+		else if (p->GetValue() < a) {
+			Node* NN = new Node(a);
+			p->SetRight(NN);
+		}
+		else {
+			Node* NN = new Node(a);
+			p->SetLeft(NN);
+		}
+	}
+}
+
+void BT :: PreOrder (Node* N) {
+	if (N != NULL) {
+		cout << N->GetValue() << endl;
+		PreOrder(N->GetLeft());
+		PreOrder (N->GetRight());
+	}
+}
+
+Node* BT :: FindMin (Node* N) {
+	if (N == NULL) return N;
+	else if (N->GetLeft() == NULL) return N;
+	else FindMin (N->GetLeft());
+}
+
+Node* BT :: Delete (Node* N, int a) { 
+	Node *NN;
+	if (a < N->GetValue()) {
+		NN = Delete(N->GetLeft(), a);
+		N->SetLeft(NN);
+	}
+	else if (a > N->GetValue()) {
+		NN = Delete(N->GetRight(), a);
+		N->SetRight(NN);
+	}
+	else if (N->GetLeft() != NULL && N->GetRight() != NULL) {
+		Node* MN = FindMin (N->GetRight());
+		N->SetValue (MN->GetValue());
+		NN = Delete (N->GetRight(), MN->GetValue());
+		N->SetRight(NN);
+	}
+	else {
+		if (N->GetRight() == NULL) {
+			N = N->GetLeft();
+		}
+		else if (N->GetLeft() == NULL) {
+			N = N->GetRight();
+		}
+		else N = NULL;
+	}
+	return N;
+}
+
+

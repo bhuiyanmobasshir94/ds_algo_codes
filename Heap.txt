@@ -1,0 +1,128 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#define SIZE 100
+
+class Heap {
+public:
+	Heap();
+	~Heap();
+
+	int GetLeft(int parent);
+	int GetRight(int parent);
+	int GetParent(int child);
+	void MaxHeapify (int *A, int index);
+	void Insert(int element);
+	//void Deletemin ();
+	void PrintHeap();
+	int GetSize();
+	void Swap (int& m, int& n);
+	void Sort(int *A, int count);
+
+private:
+	int *A;
+	int Size;
+};
+
+Heap :: Heap() {
+	Size = 0;
+	A = new int[SIZE];
+}
+
+Heap :: ~Heap() {
+	delete [] A;
+}
+
+int Heap :: GetLeft(int parent) {
+	if (parent == -1) return -1;
+
+	int i = 2 * parent + 1;
+	if (i < GetSize ()) return i;
+	else return -1;
+}
+
+int Heap :: GetRight(int parent) {
+	if (parent == -1) return -1;
+
+	int i = 2 * parent + 2;
+	if (i < GetSize ()) return i;
+	else return -1;
+}
+
+int Heap :: GetParent(int child) {
+	if (child != 0) {
+		int i = floor (double(child) / 2);
+		if (i < GetSize()) return i;
+	}
+	return -1;
+}
+
+void Heap :: MaxHeapify (int *A, int index) {
+	int P = GetParent(index);
+	int L = GetLeft(P);
+	int R = GetRight(P);
+	int Largest = P;
+
+	if (L <= GetSize() && L != -1 && A[L] > A[Largest])
+		Largest = L;
+	if ( R <= GetSize() && R != -1 && A[R] > A[Largest])
+		Largest = R;
+	if (Largest != P) {
+		int temp = A[P];
+		A[P] = A[Largest];
+		A[Largest] = temp;
+		//if (Largest != 0 && P != 0)
+		MaxHeapify(A, P);
+	}
+}
+
+
+void Heap :: Insert(int element) {
+	A[Size++] = element;
+	MaxHeapify (A, Size - 1);
+}
+
+//	void Deletemin ();
+
+void Heap :: PrintHeap() {
+	for (int i = 0; i < GetSize(); i++) 
+		cout << A[i] << "\t";
+
+	cout << endl;
+}
+
+int Heap :: GetSize() {
+	return Size;
+}
+
+void Heap :: Swap (int& m, int& n) {
+	int temp = m;
+	m = n;
+	n = temp;
+}
+
+void Heap :: Sort(int *A, int count) {
+	if (count > GetSize() / 2)
+		Swap(int A
+}
+
+#include "Heap.h"
+
+int main () {
+	Heap* myheap = new Heap();
+    myheap->Insert(700);
+    myheap->PrintHeap();
+    myheap->Insert(500);
+    myheap->PrintHeap();
+    myheap->Insert(100);
+    myheap->PrintHeap();
+    myheap->Insert(800);
+    myheap->PrintHeap();
+    myheap->Insert(200);
+    myheap->PrintHeap();
+    myheap->Insert(400);
+    myheap->PrintHeap();
+
+	return 0;
+}

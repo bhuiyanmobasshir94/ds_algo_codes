@@ -1,0 +1,183 @@
+
+#include <iostream>
+using namespace std;
+
+// Node
+class Node{
+private:
+        int value;
+        Node* PNode;
+        Node* NNode;
+
+public:
+
+        void SetValue(int a){value = a;}
+        int GetValue(){return value;}
+        void SetPrvNode(Node* PN){PNode = PN;}
+        Node* GetPrvNode(){return PNode;}
+        void SetNextNode(Node* NN){NNode = NN;}
+        Node* GetNextNode(){return NNode;}
+};
+
+
+// Double Link List
+
+class DL{
+private:
+        Node* HN;
+        int size;
+        Node* FN;
+public:
+       DL();
+       void Insert(int a);
+       void Delete(int a);
+       int Getsize(){return size;}
+       int GetCNValue(){return HN->GetValue();}
+       Node* Begin(){return HN;}
+       void Print();
+       void DescendSortlist();
+       void AscendSortlist();
+       void Swap(Node* m,Node* n);
+};
+
+DL :: DL()
+{
+    HN = NULL;
+    size = 0;
+}
+
+void DL :: Insert(int a)
+{ Node* NewNode = new Node;
+    NewNode-> SetValue(a);
+    NewNode-> SetPrvNode(NULL);//(FN);//
+    NewNode-> SetNextNode(HN);
+    if(HN == NULL)
+    {
+    HN = NewNode;
+    FN = HN;
+    }else{
+    FN->SetNextNode(NULL);//(NewNode);//
+    HN->SetPrvNode(NewNode);
+    HN = NewNode;}
+    size++;
+}
+void DL :: Delete(int a)
+{
+ Node* dn = HN;
+    do{
+    if(dn->GetValue()==a){
+    Node* dn2 = dn->GetNextNode();
+    Node* dn3 = dn->GetPrvNode();
+
+    if(dn == HN )
+    { HN = dn->GetNextNode();
+   (dn->GetNextNode())->SetPrvNode(NULL);
+   delete dn;
+   size--;
+   return;
+    }
+    else if(dn == FN )
+    { FN = dn->GetPrvNode();
+   ( dn->GetPrvNode())->SetNextNode(NULL);
+    delete dn;
+   size--;
+   return;
+    }else
+  //  Node* dn2 = dn->GetNextNode();
+    //Node* dn3 = dn->GetPrvNode();
+    dn3->SetNextNode(dn2);
+    dn2->SetPrvNode(dn3);
+    delete dn;
+    size--;
+    }
+    dn = dn->GetNextNode();
+   }while(dn!=HN);
+}
+void DL :: Print()
+{   Node* temp = FN;
+    cout << "List is:"<< endl;
+   do
+    {cout<< temp->GetValue();
+        temp = temp->GetPrvNode();
+    } while(temp!=NULL);
+}
+void DL :: Swap(Node* m,Node*n)
+{ int a = n->GetValue(), b= m->GetValue();
+     m->SetValue(a);//n->GetValue());
+  n->SetValue(b);//m->GetValue());
+}
+void DL :: DescendSortlist()
+{
+    for (Node* k=HN;k!=NULL;k=k->GetNextNode()){
+     for (Node* l=HN;l!=NULL;l=l->GetNextNode()){
+     if(k->GetValue()< l->GetValue())
+     { Swap(k,l);
+     }
+     else{continue;}
+     }
+     }
+}
+void DL :: AscendSortlist()
+{
+    for (Node* k=HN;k!=NULL;k=k->GetNextNode()){
+     for (Node* l=HN;l!=NULL;l=l->GetNextNode()){
+     if(k->GetValue()> l->GetValue())
+     { Swap(k,l);
+     }
+     else{continue;}
+     }
+     }
+}
+int main()
+{   DL dl;
+	int v =0;
+	cout << "Input desired number to Push:"<< endl;
+	cin>> v;
+	for (int i =0; i <v; i++){
+    int a=0;
+    cout << "Input:";
+    cin >> a;
+    dl.Insert(a);
+	}
+    cout << "Wanna delete something:\n If any press 1.Else 2 ";
+    int b=0;
+    cin >> b;
+    switch(b){
+    case 1: {
+       {cout<< "Input how many:";
+        int e=0;
+        cin >> e;
+    for (int i =0; i <e; i++)
+        { int c=0;
+        cout<<"Input deleted number:";
+        cin>>c;
+        dl.Delete(c); }}
+        {
+   cout << "Wanna show the numbers in Ascending(Press 1) or Descending(Press 2) or Normal(Press 3).";
+   int d =0;
+   cin >> d;
+   switch(d){
+   case 1:{dl.AscendSortlist();
+    dl.Print(); break;}
+    case 2:{ dl.DescendSortlist();
+    dl.Print(); break;}
+    case 3:{dl.Print(); break;}
+             }
+             }
+             break;}
+   case 2: {
+   cout << "Wanna show the numbers in Ascending(Press 1) or Descending(Press 2) or Normal(Press 3).";
+   int d =0;
+   cin >> d;
+   switch(d){
+   case 1:{dl.AscendSortlist();
+    dl.Print(); break;}
+    case 2:{ dl.DescendSortlist();
+    dl.Print(); break;}
+    case 3:{dl.Print(); break;}
+             }
+       break;}
+   }
+return 0;
+}
+

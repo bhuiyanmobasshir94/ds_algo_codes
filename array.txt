@@ -1,0 +1,222 @@
+frist way to delete an element on array:
+
+#include<iostream>
+#include<cstdio>
+
+using namespace std;
+
+void main(void){
+
+	int *size=new int(0);
+
+	cout<<"enter the array size:";
+	cin>>*size;
+
+	int *p;
+	p=new int[*size];
+
+	cout<<"enter "<<*size<<" number: "<<endl;
+
+	int *sum=new int(0);
+
+	for(int i=0;i<*size;i++){
+		cin>>p[i];
+		*sum +=p[i];
+	}
+	cout<<"sum="<<*sum<<endl;
+
+	cout<<"these are the elements of array:";
+
+	for(int i=0;i<*size;i++){
+		cout<<p[i]<<" ";
+	}
+
+	cout<<"\nenter the number you want to delete:";
+	int c=0;
+	cin>>c;
+
+	for(int i=0;i<*size;i++){
+		if(p[i]==c){
+			p[i]=p[i+1];
+			p[i+1]=p[*size-1];
+			p[*size-1]=0;
+		}
+		else{
+			cout<<"didn't find the number!"<<endl;
+		}
+	}
+	cout<<"after delete:";
+	for(int i=0;i<*size-1;i++){
+		cout<<p[i]<<" ";
+	}
+
+	delete [] p;
+	delete size;
+	delete sum;
+	delete [] b;
+
+}
+
+===================================================
+
+second way:
+
+#include<iostream>
+#include<cstdio>
+
+using namespace std;
+
+void main(void){
+
+	int *size=new int(0);
+
+	cout<<"enter the array size:";
+	cin>>*size;
+
+	int *p;
+	p=new int[*size];
+
+	cout<<"enter "<<*size<<" number: "<<endl;
+
+	int *sum=new int(0);
+
+	for(int i=0;i<*size;i++){
+		cin>>p[i];
+		*sum +=p[i];
+	}
+	cout<<"sum="<<*sum<<endl;
+
+	cout<<"these are the elements of array:";
+
+	for(int i=0;i<*size;i++){
+		cout<<p[i]<<" ";
+	}
+
+	cout<<"\nenter the number you want to delete:";
+	int c=0;
+	cin>>c;
+	
+	int s=*size-1;
+
+	int *b=new int[s];
+
+	for(int i=0,j=0;i<*size;i++){
+		if(p[i]==c)continue;
+		else if(p[i] != c){
+			b[j]=p[i];
+			j++;
+		}
+		else{
+			cout<<"didn't find the number"<<endl;
+		}
+	}
+	cout<<"after delete:";
+	for(int i=0;i<s;i++){
+		cout<<b[i]<<" ";
+	}
+	
+	delete [] p;
+	delete size;
+	delete sum;
+	delete [] b;
+
+}
+===============================================================
+
+third way(the ULTIMATE way):
+
+#include<iostream>
+#include<cstdio>
+
+using namespace std;
+
+void main(void){
+	int *size = new int(0);
+	cout << "enter the size of array:";
+	cin >> *size;
+
+	int *array = new int[*size];
+
+	cout << "enter " << *size << " elements:" << endl;
+
+	for (int i = 0; i < *size; i++){
+		cin >> array[i];
+	}
+	char c = '\0';
+
+	while (1){
+		cout << "press 1 to add new element\npress 2 to delete a element\npress 3 to view the elements on array" << endl;
+		int select;
+		cin >> select;
+		switch (select)
+		{
+		case 1:
+			//adding a element
+			*size = *size + 1;
+
+			int ele;
+			cout << "enter new element: ";
+			cin >> ele;
+			array[*size - 1] = ele;
+			cout << "addition sucessful!" << endl;
+
+			break;
+		case 2:
+			//deleting a element
+			step_0:
+			cout << "enter the element that you want to delete:";
+			int b;
+			cin >> b;
+
+			for (int i = 0; i < *size; i++){
+				if (array[i] == b){
+					for (; i < *size; i++){
+						array[i] = array[i + 1];
+					} 
+					*size = *size - 1;
+					cout << "deletion successful!" << endl;
+					break;
+				}
+				else if (array[i] != b){ continue; }
+				else{
+					cout << "didn't match!" << endl;
+					cout << "enter a to try again or c to exit: ";
+					char b = '\0';
+					cin >> b;
+					if (b == 'a'){
+						goto step_0;
+					}
+					else{
+						break;
+					}
+				}
+			}
+			break;
+		case 3:
+			//showing elements on array
+			cout << "elements on array: ";
+			for (int i = 0; i < *size; i++){
+				cout << array[i] << " ";
+			}
+			break;
+		default:
+			break;
+		}
+		cout << "enter c to main menu or n to exit" << endl;
+		cin >> c;
+		if (c == 'n'){
+			
+
+			delete[] array;
+			delete size;
+
+			break;
+		}
+		else{
+			continue;
+		}
+	}
+	
+	
+}
+

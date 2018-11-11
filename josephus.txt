@@ -1,0 +1,399 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+template<typename T>
+class Node{
+private:
+	T value;
+	Node<T> *Next_node;
+	Node<T> *Previous_node;
+public:
+	Node();
+	~Node();
+	void set_value(T val);
+	T get_value();
+	void set_next_node(Node<T> *address);
+	Node<T>* get_next_node();
+	void set_previous_node(Node<T> *address);
+	Node<T>* get_previous_node();
+};
+
+template<typename T>
+Node<T>::Node(){
+	Next_node = NULL;
+	Previous_node = NULL;
+}
+
+template<typename T>
+Node<T>::~Node(){}
+
+template<typename T>
+void Node<T>::set_value(T val){ value = val; }
+
+template<typename T>
+T Node<T>::get_value(){ return value; }
+
+template<typename T>
+void Node<T>::set_next_node(Node<T> *Address){ Next_node = Address; }
+
+template<typename T>
+Node<T>* Node<T>::get_next_node(){ return Next_node; }
+
+template<typename T>
+void Node<T>::set_previous_node(Node<T>* address){ Previous_node = address; }
+
+template<typename T>
+Node<T>* Node<T>::get_previous_node(){ return Previous_node; }
+
+
+template<typename T>
+class Double_link_list{
+private:
+	Node<T> *Head_node;
+	Node<T> *Curent_node;
+	Node<T> *New_node;
+	int size;
+	int call;
+public:
+	Double_link_list();
+	~Double_link_list();
+	bool list_is_empty();
+	Node<T>* search_from_front(T value);
+	Node<T>* search_from_back(T value);
+	void push_in_front(T value);
+	void push_in_back(T value);
+	void pop_from_front();
+	void pop_from_back();
+	T get_front();
+	T get_back();
+	T get_next_value();
+	void print_values();
+	void print_values_in_reverse();
+	int get_size(){ return size; }
+	void delete_value(T value);
+	void handler();
+	void info_head_current();
+	Node<T>* GetBegin() { return Head_node; }
+};
+
+template<typename T>
+T Double_link_list<T>::get_next_value(){
+	Node<T>* temp = Head_node;
+	if (call == 0){
+		call++;
+		return temp->get_value();
+	}
+	else{
+		int count = 0;
+		do{
+			temp = temp->get_next_node();
+			count++;
+		} while (count != call);
+		call++;
+		return temp->get_value();
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::info_head_current(){
+	cout << "address of head node:" << Head_node << endl;
+	cout << "value in head node:" << Head_node->get_value() << endl;;
+	cout << "address in Head_node->get_next_node(): " << Head_node->get_next_node() << endl;
+	cout << "address in Head_node->get_previous_node:" << Head_node->get_previous_node() << endl;
+	cout << "address of current node:" << Curent_node << endl;
+	cout << "value in current node:" << Curent_node->get_value() << endl;
+	cout << "address in current_node->get_next_node(): " << Curent_node->get_next_node() << endl;
+	cout << "address in current_node->get_previous_node:" << Curent_node->get_previous_node() << endl;
+}
+
+template<typename T>
+bool Double_link_list<T>::list_is_empty(){
+	if (size == 0){ return true; }
+	else{ return false; }
+}
+
+template<typename T>
+Double_link_list<T>::Double_link_list(){
+	
+	Head_node = NULL;
+	Curent_node = NULL;
+	New_node = NULL;
+	size = 0;
+	call = 0;
+	//temp = Head_node;
+}
+
+template<typename T>
+Double_link_list<T>::~Double_link_list(){
+	delete New_node;
+}
+
+template<typename T>
+Node<T>* Double_link_list<T>::search_from_front(T value){
+	if (list_is_empty() == true){
+		cout << "list is empty!" << endl;
+		return NULL;
+	}
+	else{
+		Node<T> *temporary_node = Head_node;
+		do{
+			if (temporary_node->get_value() == value){
+				return temporary_node;
+				break;
+			}
+			else{
+				temporary_node = temporary_node->get_next_node();
+			}
+		} while (temporary_node != Head_node);
+		return NULL;
+	}
+}
+
+template<typename T>
+Node<T>* Double_link_list<T>::search_from_back(T value){
+	if (list_is_empty() == true){
+		cout << "list is empty!" << endl;
+		return NULL;
+	}
+	else{
+		Node<T> *temporary_node = Curent_node;
+		do{
+			if (temporary_node->get_value() == value){
+				return temporary_node;
+				break;
+			}
+			else{
+				temporary_node = temporary_node->get_previous_node();
+			}
+		} while (temporary_node != Curent_node);
+		return NULL;
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::push_in_back(T value){
+	New_node = new Node<T>;
+	New_node->set_value(value);
+	New_node->set_next_node(Head_node);
+	New_node->set_previous_node(Curent_node);
+	size++;
+	if (Head_node == NULL){
+		Head_node = New_node;
+		Curent_node = Head_node;
+	}
+	else{
+		Curent_node->set_next_node(New_node);
+		Curent_node = New_node;
+		Head_node->set_previous_node(Curent_node);
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::push_in_front(T value){
+	New_node = new Node<T>;
+	New_node->set_value(value);
+	New_node->set_next_node(Head_node);
+	New_node->set_previous_node(Curent_node);
+	size++;
+	if (Head_node == NULL){
+		Head_node = New_node;
+		Curent_node = Head_node;
+	}
+	else{
+		Curent_node->set_next_node(New_node);
+		Head_node->set_previous_node(New_node);
+		Head_node = New_node;
+	}
+}
+
+
+template<typename T>
+void Double_link_list<T>::pop_from_front(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Head_node = Head_node->get_next_node();
+		Head_node->set_previous_node(Curent_node);
+		Curent_node->set_next_node(Head_node);
+		size--;
+		//cout << "pop sucessful!" << endl;
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::pop_from_back(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Curent_node = Curent_node->get_previous_node();
+		Curent_node->set_next_node(Head_node);
+		size--;
+		//cout << "pop sucessful!" << endl;
+	}
+}
+
+template<typename T>
+T Double_link_list<T>::get_front(){
+	return Head_node->get_value();
+}
+
+template<typename T>
+T Double_link_list<T>::get_back(){
+	return Curent_node->get_value();
+}
+
+template<typename T>
+void Double_link_list<T>::delete_value(T value){
+
+	if (search_from_back(value) == NULL){
+		cout << "requested value did not found!" << endl;
+	}
+	else if (search_from_back(value) == Curent_node){
+		pop_from_back();
+		cout << "deleted!" << endl;
+	}
+	else if (search_from_back(value) == Head_node){
+		pop_from_front();
+		cout << "deleted!" << endl;
+	}
+	else{
+		Node<T>* temporaray_node = search_from_back(value);
+		Node<T> *n1 = temporaray_node->get_previous_node(), *n2 = temporaray_node->get_next_node();
+		n1->set_next_node(n2);
+		n2->set_previous_node(n1);
+		size--;
+		cout << "deleted!" << endl;
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::print_values(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Node<T> *temporary_node = Head_node;
+		//cout << "values: ";
+		do{                                                 //we can use do while loop to print all values in a circuler 
+			cout << temporary_node->get_value() << " ";     //double link list which we can't use in linear double link list
+			temporary_node = temporary_node->get_next_node();
+		} while (temporary_node != Head_node);
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::print_values_in_reverse(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Node<T> *temporary_node = Curent_node;
+		//cout << "values: ";
+		do{                                                    //same do while loop for printing all values reversly
+			cout << temporary_node->get_value() << " ";
+			temporary_node = temporary_node->get_previous_node();
+		} while (temporary_node != Curent_node);
+	}
+}
+
+template<typename T>
+void Double_link_list<T>::handler(){
+	int sel = 0, q = 0;
+	T val = NULL;
+	char n = '\0';
+	while (n != 'e' && n != 'E'){
+		cout << "press 1 to display the properties of the Double link list\n" << endl;
+		cout << "press 2 to search in the values from front\n" << endl;
+		cout << "press 3 to search in the values from back\n" << endl;
+		cout << "press 4 to push in the front\n" << endl;
+		cout << "press 5 to push in the back\n" << endl;
+		cout << "press 6 to pop from back\n" << endl;
+		cout << "press 7 to pop from front\n" << endl;
+		cout << "press 8 to delete a value\n" << endl;
+		cout << "press 9 to  display the first value\n" << endl;
+		cout << "press 10 to display the last value\n" << endl;
+		cout << "press 11 to display the values reversly" << endl;
+		cin >> sel;
+		switch (sel){
+		case 1:
+			print_values();
+			get_size();
+			break;
+		case 2:
+			cout << "enter value:";
+			cin >> val;
+			if (search_from_front(val) == NULL){ cout << "requested value does not exist in the list!" << endl; }
+			else{
+				cout << "requested value '" << val << "' exist in the list!" << endl;
+			}
+			break;
+		case 3:
+			cout << "enter value:";
+			cin >> val;
+			if (search_from_back(val) == NULL){ cout << "requested value does not exist in the list!" << endl; }
+			else{
+				cout << "requested value '" << val << "' exist in the list!" << endl;
+			}
+			break;
+		case 4:
+			cout << "how many values you want to push?\nEnter quantity:";
+			cin >> q;
+			cout << "now enter " << q << " values" << endl;
+			for (int i = 0; i < q; i++){
+				cout << "type:";
+				cin >> val;
+				push_in_front(val);
+			}
+			break;
+		case 5:
+			cout << "how many values you want to push?\nEnter quantity:";
+			cin >> q;
+			cout << "now enter " << q << " values" << endl;
+			for (int i = 0; i < q; i++){
+				cout << "type:";
+				cin >> val;
+				push_in_back(val);
+			}
+			break;
+		case 6:
+			pop_from_back();
+			break;
+		case 7:
+			pop_from_front();
+			break;
+		case 8:
+			cout << "Enter the value you want to delete:";
+			cin >> val;
+			delete_value(val);
+			break;
+		case 9:
+			cout << "first value is:" << get_front() << endl;
+			break;
+		case 10:
+			cout << "last value is:" << get_back() << endl;
+			break;
+		case 11:
+			print_values_in_reverse();
+			break;
+		default:
+			info_head_current();
+			break;
+		}
+		cout << "Enter e to exit or c to continue:";
+		cin >> n;
+	}
+}
+
+
+void main(){
+	Double_link_list<int> list;
+	int value;
+	for (int i = 0, j = 1; i < 10; i++, j++){
+		list.push_in_back(j);
+	}
+	Node<int>* temp = list.GetBegin();
+	while (list.get_size()>1){
+			for (int i = 0; i < 3; i++){
+				temp = temp->get_next_node();
+			}
+			list.delete_value(temp->get_value());	
+	}
+	cout << "champian is: ";
+	list.print_values();
+}

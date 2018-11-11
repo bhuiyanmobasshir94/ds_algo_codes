@@ -1,0 +1,185 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+template <typename T>
+class DynamicStack {
+private:
+	T *A;
+	int top;
+public:
+	DynamicStack();
+	~DynamicStack();
+	bool IsEmpty();
+	bool Push(T a);
+	bool Pop();
+	T GetTop();
+	int Size();
+};
+
+template <typename T>
+void CopyArray(T *C, T *D, int Size) {
+	for (int i = 0; i < Size; i++) {
+		C[i] = D[i];
+	}
+}
+
+
+template <typename T>
+DynamicStack<T> ::DynamicStack() :
+top(0) {  }
+
+template <typename T>
+DynamicStack<T> :: ~DynamicStack() {
+	delete[] A;
+}
+
+template <typename T>
+bool DynamicStack<T> ::IsEmpty() {
+	if (top == 0) return true;
+	else return false;
+}
+
+template <typename T>
+bool DynamicStack<T> ::Push(T a) {
+	if (top == 0) {
+		top++;
+		A = new T[top];
+		A[top - 1] = a;
+		return true;
+	}
+	else {
+		T *B = new T[top];
+
+		CopyArray(B, A, top);
+
+		delete[] A;
+
+		top++;
+		A = new T[top];
+		CopyArray(A, B, top - 1);
+		A[top - 1] = a;
+		return true;
+	}
+}
+
+template <typename T>
+bool DynamicStack<T> ::Pop() {
+	if (IsEmpty()) return false;
+	else {
+		top--;
+		T *B = new T[top];
+
+		CopyArray(B, A, top);
+
+		delete[] A;
+		A = new T[top];
+		CopyArray(A, B, top);
+	}
+}
+
+template <typename T>
+T DynamicStack<T> ::GetTop() {
+	return A[top - 1];
+}
+
+template <typename T>
+int DynamicStack<T> ::Size() {
+	return top;
+}
+
+
+
+int priority_of(char a){
+	if (a == '(') return 1;
+	else if (a == '+' || a == '-')return 2;
+	else if (a == '*' || a == '/')return 3;
+	else if (a == '^')return 4;
+	else return 0;
+}
+
+class Converter{
+private:
+	double result;
+	DynamicStack<char> stack;
+	string input;
+	string output;
+public:
+	Converter(string &a);
+	~Converter();
+	void To_postfix();
+	void gen_result();
+	double getresult();
+	void get_output();
+	string get_input();
+};
+
+Converter::Converter(string &a){
+	result = 0;
+	output="";
+	input = a;
+}
+Converter::~Converter(){}
+
+string Converter::get_input(){ return input; }
+
+void Converter::get_output(){
+	cout << "after postfix:" << output << endl;
+}
+
+double Converter::getresult(){ return result; }
+
+void Converter::To_postfix(){
+	for (int i = 0; i < input.length(); i++){
+		if (input[i] == '0' || input[i] == '1' || input[i] == '2' || input[i] == '3' || input[i] == '4' || input[i] == '5' || input[i] == '6' || input[i] == '7' || input[i] == '8' || input[i] == '9')
+		{
+			output.push_back(input[i]);
+		}
+		else if (input[i] == '(' ){
+			stack.Push(input[i]);
+		}
+		else if (input[i] == '*' || input[i] == '/'|| input[i] == '+' || input[i] == '-' || input[i]=='^'){
+			while (1){
+				if (priority_of(stack.GetTop()) > priority_of(input[i])){
+					output.push_back(stack.GetTop());
+					stack.Pop();
+					continue;
+				}
+				else if (priority_of(stack.GetTop()) < priority_of(input[i]) || priority_of(stack.GetTop()) == priority_of(input[i])){
+					stack.Push(input[i]);
+					break;
+				}
+			}
+		}
+		else if(input[i] == ')'){
+			while (stack.GetTop() != '('){
+				output.push_back(stack.GetTop());
+				stack.Pop();
+			}
+			stack.Pop();
+		}
+		else if (input[i] == ' '){
+			continue;
+		}
+		else{
+			cout << "invalid oparend oroparator found!" << endl;	
+		}
+	}
+	
+	while (stack.IsEmpty() != true){
+		output.push_back(stack.GetTop());
+		stack.Pop();
+	}
+}
+
+void main(){
+	//slide ae post fix tar ans dea ase...
+	string infix_4 = "((6 - (2 + 3))*(3 + 8 / 2)) ^ 2 + 3";
+	
+	Converter ob1(infix_4);
+	cout << "input was:" << ob4.get_input() << endl;
+	ob4.To_postfix();
+	ob4.get_output();
+	
+}

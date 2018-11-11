@@ -1,0 +1,196 @@
+#include <iostream>
+
+using namespace std;
+
+class Node {
+public:
+	Node ();
+	Node (int a);
+	~Node ();
+	void SetValue (int a);
+	int GetValue ();
+	void SetLeft (Node* L);
+	Node* GetLeft ();
+	void SetRight (Node* R);
+	Node* GetRight ();
+private:
+	int Value;
+	Node* Left;
+	Node* Right;
+};
+
+Node :: Node () {
+	Value = 0;
+	Left = NULL;
+	Right = NULL;
+}
+
+Node :: Node (int a) {
+	Value = a;
+	Left = NULL;
+	Right = NULL;
+
+}
+
+Node :: ~Node () {
+	delete Left;
+	delete Right;
+}
+
+void Node :: SetValue (int a) {
+	Value = a;
+}
+
+int Node :: GetValue () {
+	return Value;
+}
+
+void Node :: SetLeft (Node* L) {
+	Left = L;
+}
+
+Node* Node :: GetLeft () {
+	return Left;
+}
+
+void Node :: SetRight (Node* R) {
+	Right = R;
+}
+
+Node* Node :: GetRight () {
+	return Right;
+}
+
+#include "Node.h"
+
+class BT {
+public:
+	BT ();
+	~BT ();
+	void SetRoot(Node* R);
+	Node* GetRoot ();
+	void Insert (int a);
+	void PreOrder (Node* N);
+	Node* FindMin (Node* N);
+	void Delete (Node* N, int a);
+	Node* FindPreviousNode (int a);
+	
+private:
+	Node* Root;
+};
+
+BT :: BT () {
+	Root = NULL;
+}
+
+BT :: ~BT () {
+	delete Root;
+}
+
+void BT :: SetRoot(Node* R) {
+	Root = R;
+}
+
+Node* BT :: GetRoot () {
+	return Root;
+}
+
+void BT :: Insert (int a) {
+	if (GetRoot () == NULL) {
+		Node* NN = new Node (a);
+		SetRoot (NN);
+	}
+	else {
+		Node *p, *q;
+		p = q = GetRoot();
+		while (p->GetValue() != a && q != NULL ) {
+			p = q;
+			if (p->GetValue() < a)
+				q = p->GetRight();
+			else 
+				q = p->GetLeft();
+		}
+
+		if (p->GetValue() == a)
+			cout << "Duplicate Value" << endl;
+		else if (p->GetValue() < a) {
+			Node* NN = new Node(a);
+			p->SetRight(NN);
+		}
+		else {
+			Node* NN = new Node(a);
+			p->SetLeft(NN);
+		}
+	}
+}
+
+void BT :: PreOrder (Node* N) {
+	if (N != NULL) {
+		PreOrder(N->GetLeft());
+		PreOrder (N->GetRight());
+		cout << N->GetValue() << endl;
+	}
+}
+
+Node* BT :: FindMin (Node* N) {
+	if (N == NULL) return NULL;
+	else if (N->GetLeft() == NULL) return  N;
+	else
+		FindMin (N->GetLeft());
+}
+
+Node* BT :: FindPreviousNode (int a) {
+	Node *p, *q;
+	p = q = GetRoot();
+	while (q->GetValue() != a) {
+		p = q;
+		if (p->GetValue() < a)
+			q = p->GetRight();
+		else 
+			q = p->GetLeft();
+	}
+	return p;
+}
+
+void BT :: Delete (Node* N, int a) {
+	if (a < N->GetValue()) {
+		Delete(N->GetLeft(), a);
+	}
+	else if (a > N->GetValue()) {
+		Delete(N->GetRight(), a);
+	}
+	else if (a == N->GetValue()) {
+		if (N->GetLeft() == NULL && N->GetRight() == NULL) {
+			Node* PN = FindPreviousNode (a);
+			if (PN->GetValue() > a) 
+				PN->SetLeft(NULL);
+			else 
+				PN->SetRight(NULL);
+		}
+		else if (N->GetLeft() == NULL) {
+			Node* PN = FindPreviousNode (a);
+			PN->SetRight(N->GetRight());
+			delete N;
+		}
+		else if (N->GetRight() == NULL) {
+			Node* PN = FindPreviousNode (a);
+			PN->SetLeft(N->GetLeft());
+			delete N;
+		}
+	}
+	
+}}
+
+#include "BT.h"
+
+int main () {
+	BT ob;
+	ob.Insert(25);
+	ob.Insert(86);
+	ob.Insert(69);
+	ob.Insert(25);
+	ob.PreOrder(ob.GetRoot());
+	cout << (ob.FindMin(ob.GetRoot()))->GetValue() << endl;
+	cout << (ob.FindPreviousNode(69))->GetValue() << endl;
+	return 0;
+}

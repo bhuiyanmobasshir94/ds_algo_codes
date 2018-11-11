@@ -1,0 +1,202 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+#define size 8
+
+template<typename T>
+class circuler_queue{
+private:
+	T queue_array[size];
+	int number_of_elements, top, first;
+public:
+	circuler_queue();
+	~circuler_queue();
+	T front();
+	int length();
+	int element_no();
+	void push_back(T value);
+	void pop_front();
+	bool IsEmpty();
+	bool IsFull();
+	void handler();
+	void display();
+};
+
+template<typename T>
+circuler_queue<T>::circuler_queue(){
+	first = 0;
+	top = 0;
+	number_of_elements = 0;
+}
+
+template<typename T>
+circuler_queue<T>::~circuler_queue(){}
+
+template<typename T>
+bool circuler_queue<T>::IsEmpty(){
+	if (number_of_elements == 0)return true;
+	else return false;
+}
+
+template<typename T>
+bool circuler_queue<T>::IsFull(){
+	if (number_of_elements == size)return true;
+	else return false;
+}
+
+template<typename T>
+int circuler_queue<T>::length(){
+	return size;
+}
+
+template<typename T>
+int circuler_queue<T>::element_no(){
+	return number_of_elements;
+}
+
+template<typename T>
+T circuler_queue<T>::front(){
+	if (IsEmpty() == true){ cout << "circuler queue is empty!" << endl; }
+	else{
+		return queue_array[first];
+	}
+}
+
+template<typename T>
+void circuler_queue<T>::pop_front(){
+	if (IsEmpty() == true){
+		cout << "circular queue is empty! push some elements frist" << endl;
+	}
+	else{
+		cout << "pop sucessful!" << endl;
+		number_of_elements--;
+		first++;
+		first = first%size;
+	}
+}
+
+template<typename T>
+void circuler_queue<T>::push_back(T value){
+	if (IsFull() == true){
+		cout << "circuler queue is full! pop some value frist" << endl;
+	}
+	else{
+		queue_array[top] = value;
+		top++;
+		top = top%size;
+		number_of_elements++;
+	}
+}
+
+template<typename T>
+void circuler_queue<T>::display(){
+	int count = 0, i = 0;
+	cout << "total elements in circuler queue: " << element_no() << endl;
+	cout << "element in the front: " << front() << endl;
+	cout << "circuler queue size: " << length() << endl;
+	cout << "all elements in circuler queue:";
+	if (IsEmpty() == true){ cout << "circuler queue is empty!" << endl; }
+	else{
+		i = first;
+		do {
+			cout << queue_array[i] << " ";
+			count++;
+			i++;
+			i = i%size;
+		} while (count != number_of_elements);
+	}
+	cout << endl;
+}
+
+template<typename T>
+void circuler_queue<T>::handler(){
+	char choice = '\0';
+	int select = 0;
+	T val;
+	while (choice != 'n'){
+		cout << "press 1 to view information about circuler queue" << endl;
+		cout << "press 2 to push elements in the circuler queue" << endl;
+		cout << "press 3 to pop element from the circuler queue" << endl;
+		cin >> select;
+		switch (select){
+		case 1:
+			display();
+			break;
+		case 2:
+			cout << "Enter element:";
+			cin >> val;
+			push_back(val);
+			break;
+		case 3:
+			pop_front();
+			break;
+		default:
+			break;
+		}
+		cout << "c to continue or n to exit" << endl;
+		cin >> choice;
+	}
+}
+
+void main(){
+	char ch = '\0';
+
+	cout << "enter i to integer type circuler queue" << endl;
+	cout << "enter f to float type circuler queue" << endl;
+	cout << "enter d to double type circuler queue" << endl;
+	cout << "enter c to charecter type circuler queue" << endl;
+	cout << "enter s to string type circuler queue" << endl;
+	cout << "type you choice:";
+step_1:
+	cin >> ch;
+	if (ch != 'i'&&ch != 'f'&&ch != 'd'&&ch != 's'&&ch != 'c'){
+		cout << "wrong key typed!\nenter correctly:";
+		goto step_1;
+	}
+	else{
+		switch (ch){
+		case 'c':
+		{
+			cout << "you have choosen charecter type circuler queue" << endl;
+			circuler_queue<char> x;
+			x.handler();
+			break;
+		}
+		case 'i':
+		{
+			cout << "you have choosen integer type circuler queue" << endl;
+			circuler_queue<int> x;
+			x.handler();
+			break;
+		}
+		case 'f':
+		{
+			cout << "you have choosen float type circuler queue" << endl;
+			circuler_queue<float> x;
+			x.handler();
+			break;
+		}
+		case 's':
+		{
+			cout << "you have choosen string type circuler queue" << endl;
+			circuler_queue<string> x;
+			x.handler();
+			break;
+		}
+		case 'd':
+		{
+			cout << "you have choosen double type circuler queue" << endl;
+			circuler_queue<double> x;
+			x.handler();
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+}
+
+

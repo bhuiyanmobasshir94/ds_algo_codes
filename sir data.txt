@@ -1,0 +1,118 @@
+#include <iostream>
+#include "GenericStack.h"
+#include "Sample.h"
+using namespace std;
+
+int main()
+{
+    MyStack<char> CS(5);
+
+    CS.Push('a');
+    cout << CS.Size() << endl;
+    cout << CS.GetTop() << endl;
+
+    MyStack <double> DS(100);
+    DS.Push (25.36);
+    cout << DS.Size() << endl;
+    cout << DS.GetTop() << endl;
+
+    MyStack<Sample> SS(10);
+    Sample obj(89);
+    SS.Push(obj);
+    cout << SS.Size() << endl;
+    cout << (SS.GetTop()).GetX() << endl;
+
+
+    return 0;
+}
+template <typename T>
+class MyStack {
+private:
+    T *A;
+    int top;
+    int SIZE;
+public:
+    //MyStack();
+    MyStack(int Size);
+    ~MyStack();
+    bool IsEmpty();
+    bool IsFull();
+    bool Push (T a);
+    bool Pop ();
+    T GetTop ();
+    int Size();
+};
+
+/*template <typename T>
+MyStack<T> :: MyStack () :
+    top(0)
+    {
+        A = new T[SIZE];
+    }*/
+
+template <typename T>
+MyStack<T> :: MyStack (int Size) :
+    top(0)
+    {
+        A = new T[Size];
+        SIZE = Size;
+    }
+
+template <typename T>
+MyStack<T> :: ~MyStack() {
+    delete [] A;
+}
+
+template <typename T>
+bool MyStack<T> :: IsEmpty() {
+    if (top == 0) return true;
+    else return false;
+}
+
+template <typename T>
+bool MyStack<T> :: IsFull () {
+    if (top == SIZE) return true;
+    else return false;
+}
+
+template <typename T>
+bool MyStack<T> :: Push (T a) {
+    if (IsFull()) return false;
+    else {
+        A[top++] = a;
+        return true;
+    }
+}
+
+template <typename T>
+bool MyStack<T> :: Pop () {
+    if (IsEmpty()) return false;
+    else {
+        top--;
+        return true;
+    }
+}
+
+template <typename T>
+T MyStack<T> :: GetTop () {
+    return A[top - 1];
+}
+
+template <typename T>
+int MyStack<T> :: Size() {
+    return top;
+}
+#ifndef SAMPLE_H_INCLUDED
+#define SAMPLE_H_INCLUDED
+
+class Sample {
+    int x;
+public:
+    Sample () : x(0) { }
+    Sample (int a) : x(a) { }
+    ~Sample () {}
+    void SetX(int a) { x = a; }
+    int GetX () { return x; }
+};
+
+#endif // SAMPLE_H_INCLUDED

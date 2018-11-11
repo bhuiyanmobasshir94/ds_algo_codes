@@ -1,0 +1,139 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+template<class T>
+class Dynamic_stack{
+private:
+	T *stack_array;
+	int size;
+public:
+	Dynamic_stack();
+	~Dynamic_stack();
+	void push(); 
+	void pop(); 
+	void info(); 
+	void handler(); 
+};
+
+
+template<class T>
+Dynamic_stack<T>::Dynamic_stack(){
+		size = 0;
+		stack_array = new T[size];
+}
+
+
+template<class T>
+Dynamic_stack<T>::~Dynamic_stack(){
+	delete[] stack_array;
+}
+
+
+template<class T>
+void Dynamic_stack<T>::push(){
+	size++;
+	cout << "element:";
+	T value;
+	cin >> value;
+	stack_array[size - 1] = value;
+}
+
+template<class T>
+void Dynamic_stack<T>::pop(){
+	if (size == 0){ cout << "stack is empty!\nyou have to push som elements before pop" << endl; }
+	else{
+		size--;
+		cout << "pop successful!" << endl;
+	}
+}
+
+
+template<class T>
+void Dynamic_stack<T>::info(){
+	if (size == 0){ cout << "stack is empty!\npush some element first!" << endl; }
+	else{
+		cout << "elements in your dyanmic stack:";
+		for (int i = 0; i < size; i++){
+			cout << stack_array[i] << " ";
+		}
+		cout << "\nsize of the stack is " << size << endl;
+		//cout << "most recent pushed value is " << stack_array[size - 1] << endl;
+	}
+}
+
+template<class T>
+void Dynamic_stack<T>::handler(){
+	char c = '\0';
+	int sel = 0;
+
+	while (c != 'n'){
+		cout << "press 1 to push elements\npress 2 to pop a element\npress 3 to view the propertise of the stack" << endl;
+		cin >> sel;
+		switch (sel){
+		case 1:
+			int a;
+			cout << "how many elements you want to push ?\nEnter quantity:";
+			cin >> a;
+			cout << "now enter " << a << " elements" << endl;
+			for (int i = 0; i < a; i++){
+				push();
+			}
+			break;
+
+		case 2:
+			pop();
+			break;
+		case 3:
+			info();
+			break;
+		default:
+			break;
+
+		}
+		cout << "press c to continue or n to exit:";
+		cin >> c;
+	}
+}
+
+void main(){
+	char a = '\0';
+	cout << "type 'i' to integer type stack" << endl;
+	cout << "type 'f' to integer type stack" << endl;
+	cout << "type 'c' to charecter type stack" << endl;
+	cout << "type 'd' to double type stack" << endl;
+	cout << "type 's' to string type stack" << endl;
+step_0:
+	cin >> a;
+	if (a != 'i' && a != 'f' && a != 'c' && a != 'd' && a != 's'){
+		cout << "wrong key typed!\nEnter correctly:";
+		goto step_0;
+	}
+	else if(a=='i'){
+		cout << "you've choosen the integer type stack!" << endl;
+		Dynamic_stack<int>ob;
+		ob.handler();
+	}
+	else if (a == 'f'){
+		cout << "you've choosen the float type stack!" << endl;
+		Dynamic_stack<float>ob;
+		ob.handler();
+	}
+	else if (a == 'c'){
+		cout << "you've choosen the charecter type stack!" << endl;
+		Dynamic_stack<char>ob;
+		ob.handler();
+	}
+	else if (a == 's'){
+		cout << "you've choosen the string type stack!" << endl;
+		Dynamic_stack<string>ob;
+		ob.handler();
+	}
+	else if (a == 'd'){
+		cout << "you've choosen the double type stack!" << endl;
+		Dynamic_stack<double>ob;
+		ob.handler();
+	
+	}
+}

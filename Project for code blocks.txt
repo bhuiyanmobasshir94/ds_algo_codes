@@ -1,0 +1,358 @@
+#include<iostream>
+#include<ctime>
+#include<string>
+#include<conio.h>
+
+
+using namespace std;
+
+class phone_Call{
+private:
+	string start_time = "";
+	string date = "";
+	float call_duration = 0.00;
+	float call_cost = 0.00;
+public:
+	phone_Call(){}
+	~phone_Call(){}
+	void set_start_time(string n){ start_time = n; }
+	string get_start_time(){ return start_time; }
+	void set_start_date(string n){ date = n; }
+	string get_start_date(){ return date; }
+	void set_call_duration(float n){ call_duration = n; }
+	float get_call_duration(){ return call_duration; }
+	void set_call_cost(float n){ call_cost = n; }
+	float get_call_cost(){ return call_cost; }
+	void display_call_details();
+};
+
+void phone_Call::display_call_details(){
+	cout << "start time    :" << start_time << endl;
+	cout << "Date          :" << date << endl;
+	cout << "Call duration :" << call_duration << " seconds" << endl;
+	cout << "Call cost     :" << call_cost << " BDT" << endl;
+}
+
+class phone : public phone_Call{
+private:
+	string phone_number = "";
+	float credit = 0.00;
+	string call_history = "";
+	int index = 0;
+public:
+	phone(){}
+	~phone(){}
+	void set_phone_number(string n){ phone_number = n; }
+	string get_phone_number(){ return phone_number; }
+	void set_credit(float n){ credit = n; }
+	float get_credit(){ return credit; }
+	void set_history(string n){ call_history = n; }
+	string get_history(){ return call_history; }
+	void display_phone_details();
+};
+void phone::display_phone_details(){
+	cout << "Phone number  :" << phone_number << endl;
+	cout << "credit        :" << credit << " BDT" << endl;
+	cout << "call History  :" << call_history << endl;
+}
+
+class person{
+private:
+	string name = "";
+	float avg_call_time = 0.00;
+	float total_cost = 0.00;
+public:
+	person(){}
+	~person(){}
+	int total_call = 0;
+	float total_time = 0;
+	phone owned_phone;
+	void set_name(string n){ name = n; }
+	string get_name(){ return name; }
+	void set_avg_call_time(float n){ avg_call_time = n; }
+	float get_avg_call_time(){ return avg_call_time; }
+	void set_total_cost(float n){ total_cost = n; }
+	float get_total_cost(){ return total_cost; }
+
+	void person_details();
+};
+void person::person_details(){
+	cout << "Name                 :" << name << endl;
+	cout << "avarage call time    :" << avg_call_time << " sec" << endl;
+	cout << "Total call costed    :" << total_cost << " BDT" << endl;
+	cout << "owned phone details-" << endl;
+	owned_phone.display_phone_details();
+}
+
+class person_db {
+public:
+	person *db;
+	int size = 1;
+	int index = 0;
+	person_db(){ db = new person[size]; }
+	~person_db(){ delete[] db; }
+	bool db_is_empty();
+	int search_by_phone_number(string n);
+	int search_by_name(string n);
+	void resize_database();
+	void add_person();
+	void recharge();
+	void display_all();
+	void display_one();
+	void display_all_name_number();
+};
+
+bool person_db::db_is_empty(){
+	if (index == 0) return true;
+	else return false;
+}
+int person_db::search_by_phone_number(string n){
+	if (db_is_empty() == true)cout << "Person Database empty!" << endl;
+	else{
+		for (int i = 0; i < index; i++){
+			if (n == db[i].owned_phone.get_phone_number()) return i;
+			else continue;
+		}
+	}
+	return -1;
+}
+int person_db::search_by_name(string n){
+	if (db_is_empty() == true)cout << "Person Database empty!" << endl;
+	else{
+		for (int i = 0; i < index; i++){
+			if (n == db[i].get_name()) return i;
+			else continue;
+		}
+	}
+	return -1;
+}
+
+void person_db::resize_database(){
+	person *new_db = new person[++size];
+	for (int i = 0; i < index; i++){
+		new_db[i] = db[i];
+	}
+	db = new_db;
+}
+void person_db::add_person(){
+	string n = "";
+	float balance = 0;
+	cout << "Enter name:";
+step_1:
+	cin >> n;
+	if (db_is_empty() == true)db[index].set_name(n);
+	else{
+
+		if (search_by_name(n) > -1){
+			cout << "name already exist!\nEnter a new name:";
+			goto step_1;
+		}
+		else db[index].set_name(n);
+	}
+
+	cout << "Enter phone number :";
+step_2:
+	cin >> n;
+	if (db_is_empty() == true)db[index].owned_phone.set_phone_number(n);
+	else{
+
+		if (search_by_phone_number(n) > -1){
+			cout << "number already exist!\nEnter a new number:";
+			goto step_2;
+		}
+		else db[index].owned_phone.set_phone_number(n);
+	}
+
+	cout << "Enter credit(minimum 1 BDT will need to make a call) :";
+	cin >> balance;
+	db[index].owned_phone.set_credit(db[index].owned_phone.get_credit() + balance);
+
+	++index;
+	resize_database();
+}
+void person_db::recharge(){
+	cout << "Enter phone number:";
+	string num = "";
+	cin >> num;
+	int i = search_by_phone_number(num);
+	if (i == -1){ cout << "number didn't match." << endl; }
+	else {
+		cout << "Enter amount:";
+		float tk = 0;
+		cin >> tk;
+		db[i].owned_phone.set_credit(db[i].owned_phone.get_credit() + tk);
+	}
+}
+void person_db::display_all(){
+	if (db_is_empty() == true)cout << "no person exists to display!\nadd some person first!" << endl;
+	else{
+		cout << "dislaying all the persons in this programme" << endl;
+		for (int i = 0; i < index; i++){
+			cout << "------------------------------------" << endl;
+			db[i].person_details();
+		}
+	}
+}
+void person_db::display_one(){
+	if (db_is_empty() == true)cout << "no person exists to dispaly!\nadd some person first!" << endl;
+	else{
+		cout << "Enter name :";
+		string n = "";
+		cin >> n;
+		int i = search_by_name(n);
+		if (i == -1)cout << "person doesn't exist!" << endl;
+		else{
+			db[i].person_details();
+		}
+	}
+}
+void person_db::display_all_name_number(){
+	for (int i = 0; i < index; i++){
+		cout << "--------------------------------------" << endl;
+		cout << "Name           :" << db[i].get_name() << endl;
+		cout << "Phone number   :" << db[i].owned_phone.get_phone_number() << endl;
+	}
+	cout << endl;
+}
+
+
+person_db database;
+
+float call_charge(int sec){
+	return sec * .20;
+}
+
+void make_a_call(){
+	if (database.db_is_empty() == true)cout << "no person exists!\nadd some person first!" << endl;
+	else if (database.index < 2)cout << "more than 1 person is needed to make a phone call" << endl;
+	else{
+		cout << "select the person who will make the call..." << endl;
+		database.display_all_name_number();
+		cout << "enter caller's number :";
+		string caller_num = "";
+	step_1:
+		cin >> caller_num;
+		if (database.search_by_phone_number(caller_num) == -1){
+			cout << " number didn't match!\nenter caller's number correctly :";
+			goto step_1;
+		}
+		else cout << "caller selected!" << endl;
+
+		cout << "enter receiver's number :";
+		string receiver_num = "";
+	step_2:
+		cin >> receiver_num;
+		if (database.search_by_phone_number(receiver_num) == -1){
+			cout << "number didn't match!\nenter receiver's number correctly :";
+			goto step_2;
+		}
+		else cout << "receiver selected!" << endl;
+
+		struct tm nowinfo, theninfo;
+
+		cout << "press 'enter' to make the call" << endl;
+		_getch();
+		cout << "calling.....\nconnecting.....\nreceived...." << endl;
+
+		database.db[database.search_by_phone_number(caller_num)].total_call++;
+
+		time_t now = time(NULL);
+		nowinfo = *(localtime(&now));
+		char now_time[20], now_date[20];
+		strftime(now_time, 20, "%I:%M:%S%p", &nowinfo);
+		strftime(now_date, 20, "%x", &nowinfo);
+
+		cout << "\nongoing call....\n\npress 'enter' to end the call" << endl;
+		_getch();
+		cout << "\ncall ended" << endl;
+
+		time_t then = time(NULL);
+		theninfo=*(localtime(&then));
+
+		int duration = difftime(then, now);
+		float cost = call_charge(duration);
+		int i = database.search_by_phone_number(caller_num);
+		int j = database.search_by_phone_number(receiver_num);
+
+		database.db[i].owned_phone.set_call_cost(cost);
+		database.db[i].owned_phone.set_call_duration(duration);
+		database.db[i].owned_phone.set_start_time(now_time);
+		database.db[i].owned_phone.set_start_date(now_date);
+
+		database.db[i].owned_phone.display_call_details();
+
+		database.db[i].set_total_cost(database.db[i].get_total_cost() + cost);
+		database.db[i].owned_phone.set_credit(database.db[i].owned_phone.get_credit() - cost);
+		database.db[i].total_time = database.db[i].total_time + duration;
+		database.db[i].set_avg_call_time(database.db[i].total_time / database.db[i].total_call);
+
+		string caller_history = "", receiver_history = "";
+		caller_history += "\n--------------------------\n";
+		caller_history += "Date->";
+		caller_history += now_date;
+		caller_history += "\nTime->";
+		caller_history += now_time;
+		caller_history += "\nTo->";
+		caller_history += receiver_num;
+		database.db[i].owned_phone.set_history(database.db[i].owned_phone.get_history() += caller_history);
+		receiver_history += "\n--------------------------\n";
+		receiver_history += "Date->";
+		receiver_history += now_date;
+		receiver_history += "\nTime->";
+		receiver_history += now_time;
+		receiver_history += "\nFrom->";
+		receiver_history += caller_num;
+		database.db[j].owned_phone.set_history(database.db[j].owned_phone.get_history() += receiver_history);
+	}
+}
+
+void handler(){
+	char choice = '\0';
+	int select = 0;
+
+	while (choice != 'e' && choice != 'E'){
+		cout << "Welcome to the 'Mobile Phone Bill' programe\n" << endl;
+		cout << "********Main Menu********" << endl;
+		cout << "press 1 to see all infomation of the persons in this programme" << endl;
+		cout << "press 2 to see a perticuler person's details, his/her phone details" << endl;
+		cout << "press 3 to make a call" << endl;
+		cout << "press 4 to add a person to this programme" << endl;
+		cout << "press 5 to recharge a number" << endl;
+		cout << "\nEnter your choice :";
+		cin >> select;
+		switch (select){
+		case 1:{
+			database.display_all();
+			break;
+		}
+		case 2:{
+			database.display_one();
+			break;
+		}
+		case 3:{
+			make_a_call();
+			break;
+		}
+		case 4:{
+			database.add_person();
+			break;
+		}
+		case 5:{
+			database.recharge();
+			break;
+		}
+		default:{
+			cout << "wrong key pressed!" << endl;
+			break;
+		}
+		}
+		cout << "\nEnter e to exit or c to return to the main menu :";
+		cin >> choice;
+	}
+}
+
+
+int main(){
+	handler();
+	return 0;
+}

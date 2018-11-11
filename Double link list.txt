@@ -1,0 +1,317 @@
+//**Attention:the below's comments are only for maruf!! :D:D
+
+#include<iostream>  //header file for c++ and basic I/O
+
+using namespace std;  //for std namespace(cout & cin)
+
+class Node{  //class to create the structure of a single node
+private:
+	int value;   //to store values of the list
+	Node *Next_node;  //to store address of the next node
+	Node *Previous_node;  //to store address of the previous node
+public:
+	Node();     //constructor
+	~Node();   //destructor
+	void set_value(int val);  //funtion for set the value 
+	int get_value();  //function for get the value
+	void set_next_node(Node *address);  //funtion for setting the address of next node
+	Node* get_next_node();  //funtion for getting th eaddress of next node
+	void set_previous_node(Node *address);  //function for setting the address of previous node 
+	Node* get_previous_node();  //function for getting the addess of previous node
+};
+
+Node::Node(){
+	value = 0;  //initialinzing value
+	Next_node = NULL; //initializing next_Node(pointer)
+	Previous_node = NULL; //initializing previous_node(pointer)
+}
+Node::~Node(){}
+
+void Node::set_value(int val){ value = val; }  //body of set_value
+
+int Node::get_value(){ return value; }  //body of get_value
+
+void Node::set_next_node(Node *Address){ Next_node = Address; }  //body of set_nest_node
+
+Node* Node::get_next_node(){ return Next_node; }  //body of get_next_node
+
+void Node::set_previous_node(Node* address){ Previous_node = address; }  //body of set_previous_node
+
+Node* Node::get_previous_node(){ return Previous_node; }  //body of get_previous_node
+
+class Double_link_list{   //class for create the structure of the Double link list
+private:
+	Node *Head_node;     // the start of the Double link list 
+	Node *Curent_node;   //the tail of the double link list
+	Node *New_node;      //new_node for adding a value (each time)
+	int size;            //keeps the track of the size of Double link list
+public:
+	Double_link_list();   //constructor
+	~Double_link_list();  //destructor
+	bool list_is_empty();  //a boolien function which is let us going to know weather the list is empty or not
+	Node* search_from_front(int val);  //start searching the list from head_node
+	Node* search_from_back(int val);  //start searching the list fron tail(current_node)
+	void push_in_front(int value);   //a function for pushing the value in the begening(head_node) of the list  
+	void push_in_back(int value);   //a function for pushing the value in the ending(current_node) of the list  
+	void pop_from_front();    //a function for pop the value from head_node
+	void pop_from_back();  //a function for pop the value from current_node
+	int get_front();   //return the value in head_node
+	int get_back();  //return the value in current_node
+	void print_values();  //print the value by head_node to current_node
+	void print_values_in_reverse();  //print the value by current_node to head_node
+	void get_size(){ cout << "size: " << size << endl; }  //print the size of the list
+	void delete_value(int d_val);  //delete a value form list
+	void handler();  //handle all above function of the double link list 
+};
+bool Double_link_list::list_is_empty(){
+	if (size == 0){ return true; }
+	else{ return false; }
+}
+Double_link_list::Double_link_list(){
+	Head_node = NULL;  //initializing Head_node(pointer)
+	Curent_node = NULL;  //initializing Current_node(pointer)
+	New_node = NULL;  //initializing New_node(pointer)
+	size=0;  //initializing size
+}
+
+Double_link_list::~Double_link_list(){
+	delete New_node;  //releasing the memory
+}
+
+Node* Double_link_list::search_from_front(int val){
+	if (list_is_empty() == true){ 
+		cout << "list is empty!" << endl;  
+		return NULL;
+	}
+	else{
+		Node *temporary_node = Head_node;
+		while (temporary_node != NULL){
+			if (temporary_node->get_value() == val){
+				return temporary_node;
+				break;
+			}
+			else{
+				temporary_node = temporary_node->get_next_node();
+			}
+		}
+		
+		return NULL;
+	}
+}
+
+Node* Double_link_list::search_from_back(int val){
+	if (list_is_empty() == true){ 
+		cout << "list is empty!" << endl;
+		return NULL;
+	}
+	else{
+		Node *temporary_node = Curent_node;
+		while (temporary_node != NULL){
+			if (temporary_node->get_value() == val){
+				return temporary_node;
+				break;
+			}
+			else{
+				temporary_node = temporary_node->get_previous_node();	
+			}
+		}
+		return NULL;
+	}
+}
+
+void Double_link_list::push_in_back(int value){
+	New_node = new Node;
+	New_node->set_value(value);
+	New_node->set_next_node(NULL);
+	size++;
+	if (Head_node == NULL){
+		New_node->set_previous_node(NULL);
+		Head_node = New_node;
+		Curent_node = Head_node;
+	}
+	else{
+		Curent_node->set_next_node(New_node);
+		New_node->set_previous_node(Curent_node);
+		Curent_node = New_node;
+	}
+}
+
+void Double_link_list::push_in_front(int value){
+	New_node = new Node;
+	New_node->set_value(value);
+	New_node->set_previous_node(NULL);
+	size++;
+	if (Head_node == NULL){
+		New_node->set_next_node(NULL);
+		Head_node = New_node;
+		Curent_node = Head_node;
+	}
+	else{
+		Head_node->set_previous_node(New_node);
+		New_node->set_next_node(Head_node);
+		Head_node = New_node;
+	}
+}
+
+void Double_link_list::pop_from_front(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Head_node = Head_node->get_next_node();
+		size--;
+		cout << "pop sucessful!" << endl;
+	}
+}
+
+void Double_link_list::pop_from_back(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Curent_node = Curent_node->get_previous_node();
+		Curent_node->set_next_node(NULL);
+		size--;
+		cout << "pop sucessful!" << endl;
+	}
+}
+
+int Double_link_list::get_front(){
+	return Head_node->get_value();
+}
+
+int Double_link_list::get_back(){
+	return Curent_node->get_value();
+}
+
+void Double_link_list::delete_value(int d_val){
+	
+	if (search_from_back(d_val) == NULL){
+		cout << "requested value did not found!" << endl;
+	}
+	else if (search_from_back(d_val) == Curent_node){
+		pop_from_back();
+	}
+	else if (search_from_back(d_val) == Head_node){
+		pop_from_front();
+	}
+	else{
+		Node* temporaray_node = search_from_back(d_val);
+		Node *n1=temporaray_node->get_previous_node(), *n2=temporaray_node->get_next_node();
+		n1->set_next_node(n2);
+		n2->set_previous_node(n1);
+		size--;
+		cout << "deleted!" << endl;
+	}
+}
+
+void Double_link_list::print_values(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Node *temporary_node = Head_node;
+		cout << "values: ";
+		while (temporary_node != NULL){
+			cout << temporary_node->get_value()<<" ";
+			temporary_node = temporary_node->get_next_node();
+		}
+	}
+}
+
+void Double_link_list::print_values_in_reverse(){
+	if (list_is_empty() == true){ cout << "list is empty!" << endl; }
+	else{
+		Node *temporary_node = Curent_node;
+		cout << "values: ";
+		while (temporary_node != NULL){
+			cout << temporary_node->get_value()<<" ";
+			temporary_node = temporary_node->get_previous_node();
+		}
+	}
+}
+
+void Double_link_list::handler(){
+	int sel=0,val=0,q=0;
+	char n = '\0';
+	while (n != 'e' && n != 'E'){
+		cout << "press 1 to display the properties of the Double link list\n" << endl;
+		cout << "press 2 to search in the values from front\n" << endl;
+		cout << "press 3 to search in the values from back\n" << endl;
+		cout << "press 4 to push in the front\n" << endl;
+		cout << "press 5 to push in the back\n" << endl;
+		cout << "press 6 to pop from back\n" << endl;
+		cout << "press 7 to pop from front\n" << endl;
+		cout << "press 8 to delete a value\n" << endl;
+		cout << "press 9 to  display the first value\n" << endl;
+		cout << "press 10 to display the last value\n" << endl;
+		cout << "press 11 to display the values reversly" << endl;
+		cin >> sel;
+		switch (sel){
+		case 1:
+			print_values();
+			get_size();
+			break;
+		case 2:
+			cout << "enter value:";
+			cin >> val;
+			if (search_from_front(val) == NULL){ cout << "requested value do not exist in the list!" << endl; }
+			else{
+				cout << "requested value "<< val<<" exist in the list!" << endl;
+			}
+			break;
+		case 3:
+			cout << "enter value:";
+			cin >> val;
+			if (search_from_back(val) == NULL){ cout << "requested value do not exist in the list!" << endl; }
+			else{
+				cout << "requested value " << val << " exist in the list!" << endl;
+			}
+			break;
+		case 4:
+			cout << "how many values you want to push?\nEnter quantity:";
+			cin >> q;
+			cout << "now enter " << q << " values" << endl;
+			for (int i = 0; i < q; i++){
+				cout << "type:";
+				cin >> val;
+				push_in_front(val);
+			}
+			break;
+		case 5:
+			cout << "how many values you want to push?\nEnter quantity:";
+			cin >> q;
+			cout << "now enter " << q << " values" << endl;
+			for (int i = 0; i < q; i++){
+				cout << "type:";
+				cin >> val;
+				push_in_back(val);
+			}
+			break;
+		case 6:
+			pop_from_back();
+			break;
+		case 7:
+			pop_from_front();
+			break;
+		case 8:
+			cout << "Enter the value you want to delete:";
+			cin >> val;
+			delete_value(val);
+			break;
+		case 9:
+			cout << "first value is:" << get_front() << endl;
+			break;
+		case 10:
+			cout << "last value is:" << get_back() << endl;
+			break;
+		case 11:
+			print_values_in_reverse();
+			break;
+		default:
+			break;
+		}
+		cout << "Enter e to exit or c to continue:";
+		cin >> n;
+	}
+}
+
+void main(){  //our main function
+	Double_link_list *ob=new Double_link_list;  //creating a dynamic object
+	ob->handler();  //calling handler by the object
+	delete ob;  //relesing the memory
+}
